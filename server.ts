@@ -19,6 +19,7 @@ import {
 } from './src/server/db.js';
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'mahadev_ply_cms_super_secret_key_2026';
 
@@ -75,9 +76,12 @@ interface AuthenticatedRequest extends express.Request {
 }
 
 function authMiddleware(req: AuthenticatedRequest, res: express.Response, next: express.NextFunction) {
-  let token = req.cookies.cms_token;
-  if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+  let token: string | undefined;
+
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies && req.cookies.cms_token) {
+    token = req.cookies.cms_token;
   }
 
   if (!token) {
@@ -933,6 +937,9 @@ async function startServer() {
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
+    app.get('/admin*', (_req, res) => {
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
     app.get('*', (_req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });

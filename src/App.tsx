@@ -89,7 +89,7 @@ export default function App() {
     cmsApi.logout();
     setAdminUser(null);
     localStorage.removeItem('mahadev_admin_user');
-    handleSetCurrentView('home');
+    setCurrentView('admin');
   };
 
   // If viewing admin route, render admin views separately
