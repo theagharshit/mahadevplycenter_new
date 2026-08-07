@@ -89,7 +89,7 @@ export default function App() {
     cmsApi.logout();
     setAdminUser(null);
     localStorage.removeItem('mahadev_admin_user');
-    setCurrentView('admin');
+    handleSetCurrentView('home');
   };
 
   // If viewing admin route, render admin views separately
@@ -174,7 +174,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <Footer setCurrentView={handleSetCurrentView} lang={lang} />
+      <Footer setCurrentView={handleSetCurrentView} lang={lang} isAdminLoggedIn={Boolean(adminUser)} />
 
       {/* Modals */}
       <QuoteModal
