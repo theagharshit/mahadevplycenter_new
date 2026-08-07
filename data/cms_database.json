@@ -1,0 +1,406 @@
+{
+  "users": [
+    {
+      "id": "usr_super_01",
+      "email": "admin@mahadevply.com",
+      "passwordHash": "$2b$10$2731X0GSL1xARJKH4feQmOd/hLrzh4hH97xgSdFCbk/Jkft1vZV2u",
+      "name": "Mahadev Store Owner",
+      "role": "super_admin",
+      "createdAt": "2026-07-29T16:12:56.141Z"
+    }
+  ],
+  "categories": [
+    "Plywood",
+    "Hardware",
+    "Veneers",
+    "Laminates",
+    "Locks & Security",
+    "MDF & Particle Board"
+  ],
+  "products": [
+    {
+      "id": "ply-01",
+      "name": "Commercial Plywood 18mm",
+      "category": "Plywood",
+      "grade": "Premium Grade",
+      "application": [
+        "Living Room",
+        "Wardrobe",
+        "Commercial"
+      ],
+      "brand": "CenturyPly",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuAq3qEflYIu_JY1w0dAWaM8gHqM4zbuM6JxMaS_9wUJDioOAtieae3YkR1DTmlwXZyeA34pm2RNUlj13Ci0AbmpOEL8m4wgzxOqOwhZnqREP5qbrk14DthdQ7UcZFBZDnbq87BgUwu1sQCIUT3s6TmHQC7Dggepp5okvw_lFlN9dzIKiUMbqxD34LdILN1FHyA6KS1otAwIzIh3M39cA8nfpv-pRMIYQJnQdQZ-vizZ8lxK3E-MDLGKVM5I59NxKGIkeJTYNOAKZTH3",
+      "description": "High durability MR (Moisture Resistant) grade plywood suitable for interior furniture applications, wardrobes, and living room paneling.",
+      "material": "Selected Hardwood Veneers",
+      "standardSize": "8ft x 4ft (8x4)",
+      "properties": "Moisture Resistant, Termite Protected, Uniform Density",
+      "idealUse": "Living room wall paneling, bedroom wardrobes, office desks",
+      "storeLocation": "Main Display Hall, Satdobato, Lalitpur",
+      "inStock": true,
+      "priceEstimate": "NPR 3,800 - 4,500 / sheet",
+      "thickness": "18mm"
+    },
+    {
+      "id": "ven-01",
+      "name": "Natural Walnut Veneer",
+      "category": "Veneers",
+      "grade": "Decorative",
+      "application": [
+        "Living Room",
+        "Commercial"
+      ],
+      "brand": "Mahadev Select",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDCOkg1m0CUw6eQ64s1io7auKi-Av09AzmK9QH_9-Vhw18rGXyYewn1RklAuj42Ymft2MJoK4XiTLUKpW9rFRd4m_pSHk03ml2xuvWToVOKJfX5RZJUL8ewbPbtWXhe3W-xq0QjcUZAVGn5IsupZ8L1Ab1kuEJnE2YPonCmbhpDk4FaAROfPWIYOH3h7fPaRpErbotYv0hqbitVflnSVNQoCAczXWsgJJ6C7tkSc4WiZq3e22nwkms-XwV4DeE0RgsfrkMzX2a-PwFm",
+      "description": "Exotic natural wood veneer with distinctive rich grain patterns for luxury interior surfacing and statement feature walls.",
+      "material": "100% Genuine Walnut Timber Slice",
+      "standardSize": "8ft x 4ft",
+      "properties": "UV Cured finish ready, Natural Wood Grain, Premium Aesthetics",
+      "idealUse": "Feature walls, executive office furniture, luxury doors",
+      "storeLocation": "Veneer Gallery, Satdobato, Lalitpur",
+      "inStock": true,
+      "priceEstimate": "NPR 180 - 250 / sq ft",
+      "thickness": "4mm base"
+    },
+    {
+      "id": "lam-01",
+      "name": "Matte Finish Laminate 1mm",
+      "category": "Laminates",
+      "grade": "Textured",
+      "application": [
+        "Kitchen",
+        "Wardrobe",
+        "Commercial"
+      ],
+      "brand": "Greenply",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuD0xecB4gLuBLbV1rk1w7Og818tHNS7em9EM6Bu1uOvAebGbOeG7WTbOf9NmTBtmR1_ExezCJ5RdEXURoxxnw7KinKupykQYYkPPJrTaQs4rPQg0FFAUUbxnVpD8mNbgedUh1xVZc9Ml4kpUIxYtdHK2zNc25Rzff7xVWgl2B27NzWF65ifUwM4uwgr0V5NeMY3th2RwAElRVLK5glphhHRpsT-IH_Eq2qyBcdjno_WQYXWS3laZAR3m3wKgvuUmXhPH0j0fD0G8nIk",
+      "description": "Scratch-resistant 1mm decorative high-pressure laminate with anti-fingerprint coating for seamless modern surface finishing.",
+      "material": "Kraft Paper & Melamine Resins",
+      "standardSize": "8ft x 4ft",
+      "properties": "Anti-Fingerprint, Heat Resistant, Easy Clean Matte Surface",
+      "idealUse": "Kitchen shutter laminate, wardrobe doors, table tops",
+      "storeLocation": "Laminate Rack 4, Satdobato, Lalitpur",
+      "inStock": true,
+      "priceEstimate": "NPR 1,850 - 2,400 / sheet",
+      "thickness": "1mm"
+    },
+    {
+      "id": "ply-02",
+      "name": "Marine Grade Plywood 19mm",
+      "category": "Plywood",
+      "grade": "BWR Grade",
+      "application": [
+        "Kitchen",
+        "Bathroom",
+        "Commercial"
+      ],
+      "brand": "CenturyPly",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuBxAFzGGJoSI-4Jxll76k8-4Bg_mWob1Rvr7qg1Uww9IFADCkQdT9tZ8Ngo4ubx3csfcv_pnulmmHvcsbT6P0SrPQNa3YIe3JC7VvmAbNdnUhrXofZASU87fNU4n2oY2VqPPcDJxrq0bEJrwvAy7X8RIcV4rA0KRTVl71KfoC8ndlG-tcm3EoeXmfUnPds2Ptzxz2GpfqfSUIPOdCDVxuILWClUsrWszW0c84YowMNDQ7pb3plwqniUfOlTLgOMOnmR5D5KFOSkg3Zx",
+      "description": "Boiling Water Resistant (BWR/BWP) marine grade plywood engineered with phenolic synthetic resins for wet areas and heavy kitchen woodwork.",
+      "material": "100% Gurjan Hardwood Core",
+      "standardSize": "8ft x 4ft",
+      "properties": "72 Hours Boiling Water Proof, Borer Proof, Heavy Weight",
+      "idealUse": "Modular kitchen cabinets, bathroom vanities, under-sink drawers",
+      "storeLocation": "Heavy Timber Yard, Satdobato, Lalitpur",
+      "inStock": true,
+      "priceEstimate": "NPR 5,200 - 6,100 / sheet",
+      "thickness": "19mm"
+    },
+    {
+      "id": "mdf-01",
+      "name": "Plain MDF Board 12mm",
+      "category": "MDF & Particle Board",
+      "grade": "Standard Grade",
+      "application": [
+        "Wardrobe",
+        "Living Room",
+        "Commercial"
+      ],
+      "brand": "Mahadev Select",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuB9XcqdFipfNiz0Ft9yhdyXHTozr7apy_nJE4lqpRYm7oge1jKKnBHKlm6Ro1XRJJyV_f5AXEWy5KXMXF3n6WjItcAp89hxHxmCTvtLf-E8Uy5zQtty_G34toO5f37miD3Q0LPpX5u0cd88B91R_xIlkT6LkoQUonCYARA9F8Qk61l7dQFzrLWx79YEsmWs8iaKf5O7vV7gq_zOU6AjsMt4UYJvjHT_FOsdJpyGmrP16i2Ijjf7jtaLeO2TInnGtRN_kzZlChJLuPm1",
+      "description": "Smooth Medium Density Fiberboard providing a flawless, grain-free surface ideal for CNC routing, painting, and lacquer finishes.",
+      "material": "Refined Wood Fiber & Synthetic Binder",
+      "standardSize": "8ft x 4ft",
+      "properties": "Ultra Smooth Surface, Easy CNC Milling, Screw-holding Density",
+      "idealUse": "CNC decorative partitions, painted cabinet shutters, speaker boxes",
+      "storeLocation": "Warehouse Section B, Satdobato, Lalitpur",
+      "inStock": true,
+      "priceEstimate": "NPR 1,900 - 2,300 / sheet",
+      "thickness": "12mm"
+    },
+    {
+      "id": "ven-02",
+      "name": "Smoked Oak Veneer",
+      "category": "Veneers",
+      "grade": "Textured",
+      "application": [
+        "Living Room",
+        "Commercial"
+      ],
+      "brand": "Mahadev Select",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuAKv8cXq0TAgDhIumnHGUXZrcYqJ59tybU38i8pWCt8JIdxpuQdC08g1ie-IkxEH1sPYSJPaQ3w4YB_iRAPB4RqQNJZS6GrpyrPYuqgGmew8YwsPnndWSpuK6OLjGNt97Pv2q0yJyO1DUo8PbzzM5PdXbsgrtcJVD3fPaef-h-A8t_wtbrx-Wtch8tAA-MmjitK1asI3zATxFtyPfHW2yFmM0_bKc2Icl3tIYylqnklF0vpoPtGObRP163TYAtQDuBZDfWWWpq9-fFw",
+      "description": "Deeply textured smoked oak finish creating a rich dark wood aesthetic with visible depth for modern architectural interiors.",
+      "material": "Smoked European Oak Timber",
+      "standardSize": "8ft x 4ft",
+      "properties": "Fumed Dark Finish, Deep Texture, High UV Color Stability",
+      "idealUse": "Main door paneling, hotel reception counters, TV unit backdrops",
+      "storeLocation": "Veneer Gallery, Satdobato, Lalitpur",
+      "inStock": true,
+      "stockStatus": "on_demand",
+      "priceEstimate": "NPR 220 - 310 / sq ft",
+      "thickness": "4mm base"
+    },
+    {
+      "id": "ply-03",
+      "name": "Premium Teak Plywood 18mm BWP",
+      "category": "Plywood",
+      "grade": "BWP Marine Grade",
+      "application": [
+        "Kitchen",
+        "Bathroom",
+        "Living Room",
+        "Commercial"
+      ],
+      "brand": "CenturyPly",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuALJkUnvcFU5O7LMvK3BEh68NB_aEcDb782w8VPSrDodHMjPoJYhwT7RPdAXG-w8u0-4HFNU9cnmbjzoO7Crwb7Zd9aqZL4HSMLS1CKoP-V8jnpVZqEsGLSVFSWyf_8f9VdhOaFQMMZE6o9sOv-jcrjA5zO9NNRL0QVyeBbLLsvnT2E5FPokWnOU8d345YHPDoC2KiAMVOPmzLlrvG87YDi9-osEKEFUJhCRqDHFzlQ322BjEmn-pSyoSKbesR5eb7cJo-ueWgyydqc",
+      "description": "Top-tier 100% hardwood timber core BWP grade plywood with natural teak veneer face. Lifetime guarantee against borer & termites.",
+      "material": "100% Hardwood Timber & Teak Face",
+      "standardSize": "8ft x 4ft (8x4)",
+      "properties": "100% Boiling Water Proof, Termite Proof, Zero Emission",
+      "idealUse": "Custom luxury furniture, kitchen cabinets, heavy load wardrobes",
+      "storeLocation": "Main Market, Satdobato, Lalitpur",
+      "inStock": true,
+      "priceEstimate": "NPR 6,800 - 7,500 / sheet",
+      "thickness": "18mm"
+    },
+    {
+      "id": "hdw-01",
+      "name": "Smart Security Digital Door Lock",
+      "category": "Locks & Security",
+      "grade": "Premium Grade",
+      "application": [
+        "Living Room",
+        "Commercial"
+      ],
+      "brand": "Hafele",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuD45i8rwwS7HlqFokKJKoFzaTqZvpzcQJv1tkYYIJpJnDzp-8ds1E9QGOy3K0zFW8xxm-wHIRqUMHgk-VDv9TI3PjDNeTL9TXKG6YFEMM8pHCRm-qMvmpwUCJGwjpE1KrF3FvAd93K_hSMlokg0IOEFNgbzsYdTcfL4jdtjLev0XrWcxC51cUqTPxOreA_78ZWX5sMoSk0PKFczIsmt9lvpyXbaPUWo9RiIFAq-xovCGLZ79OuSatiFdwLKEZuhtqoqHFWg93GI_JBl",
+      "description": "Modern biometric fingerprint, passcode, RFID card, and mechanical key smart lock system for entrance wooden and security doors.",
+      "material": "Zinc Alloy & Tempered Glass Touchscreen",
+      "standardSize": "Standard Mortise Size (38-55mm door thickness)",
+      "properties": "Fingerprint Sensor, Anti-Theft Alarm, Emergency USB Power",
+      "idealUse": "Main entrance wooden doors, apartment entrances, private office doors",
+      "storeLocation": "Hardware Section, Satdobato, Lalitpur",
+      "inStock": true,
+      "priceEstimate": "NPR 18,500 - 24,000 / set",
+      "thickness": "Universal Mortise"
+    },
+    {
+      "id": "hdw-02",
+      "name": "Architectural Brass Lever Door Handles",
+      "category": "Hardware",
+      "grade": "Decorative",
+      "application": [
+        "Living Room",
+        "Wardrobe",
+        "Commercial"
+      ],
+      "brand": "Hettich",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDk9X2RZjE2ufyZRsKGn-f3otNaZkRh4gBw_bbI5SfoOPcoUYgwebOZfvn8zt-2ePvW6xDm-zeC97v2bxo1HQFPh6FhxS_4X399F_52uJqPXx9aX7NTznqMWeIeIGB1wNj9JJwzi9Gx3IVBgkJMWH_s87gJqrV_AidLqiqNXIclwVpXSSsJtEHAr0lDo5efsigSSnC1ezmR0VHLsgeSYmxSTiTqddvbSzp-86uKIBpYnGI0mwg6s7jTLDTnwbLimZl2-J5Bllmin0KM",
+      "description": "Sleek brushed brass and matte black architectural lever handles engineered for smooth tactile operation and long-lasting finish.",
+      "material": "Solid Brass & PVD Coating",
+      "standardSize": "Standard Rose Mount 55mm",
+      "properties": "Anti-Rust PVD Finish, Dual Spring Return Mechanism",
+      "idealUse": "Interior room doors, main entrance doors, luxury office doors",
+      "storeLocation": "Hardware Counter 2, Satdobato, Lalitpur",
+      "inStock": true,
+      "priceEstimate": "NPR 3,200 - 4,800 / pair",
+      "thickness": "N/A"
+    },
+    {
+      "id": "hdw-03",
+      "name": "Heavy Duty Steel Mortise Cylinder Lock",
+      "category": "Locks & Security",
+      "grade": "Standard Grade",
+      "application": [
+        "Commercial",
+        "Living Room"
+      ],
+      "brand": "Hafele",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuAGCfHtrgO8fdyAgwfIVPO6qykFPHzR0GnYdBGeXc7ReZA8sgLiLdf0I51ggXuCWx3lZYU2k_oqOMFCvFq5WE5zN7s6IGBAOoDYlhlGlq_sb4JzizoelDJqZyq4fEU3Rf993KKASg0BAq5zLtkF9Z-eOiiKu1BJrJRLAtu7VyQfaPW8ntRph3PPoW5_DJtm0f9k3QuJr5u_A6_bI4amBcsltGrvSFuAkB-sVF-5bX8QIkeuxj8RBsDSKK6B8IRHmEoWJPPyBPfYBwID",
+      "description": "Precision-engineered stainless steel cylindrical deadbolt and latch lock cylinder delivering high security for residential and commercial doors.",
+      "material": "Stainless Steel 304 Grade",
+      "standardSize": "70mm Euro Profile Cylinder",
+      "properties": "Anti-Drill, Anti-Pick Pins, Computerized Dimple Keys",
+      "idealUse": "Wooden main doors, office doors, hotel room doors",
+      "storeLocation": "Hardware Counter 1, Satdobato, Lalitpur",
+      "inStock": true,
+      "priceEstimate": "NPR 2,400 - 3,500 / set",
+      "thickness": "N/A"
+    }
+  ],
+  "blogPosts": [
+    {
+      "id": "blog-01",
+      "title": "Choosing the Right Plywood for Your Kitchen Cabinets",
+      "category": "Plywood Tips",
+      "snippet": "Discover the essential differences between MR, BWR, and BWP grade plywood, and learn which one is truly best suited for long-lasting kitchen cabinetry.",
+      "content": "\nWhen planning a kitchen renovation or building custom cabinetry in Kathmandu Valley, selecting the right plywood grade is the single most critical structural decision. With high humidity in Nepal during monsoon seasons and constant water exposure near sinks, picking the wrong grade will lead to warping, delamination, and termite infestation.\n\n### Understanding the Grades: MR vs BWR vs BWP\n\n1. **MR Grade (Commercial Plywood):**\n   - **Full Form:** Moisture Resistant Grade.\n   - **Best For:** Dry areas like bedroom wardrobes, living room TV units, wall paneling, and office desks.\n   - **Key Advantage:** Affordable, light, easy to saw and drill.\n\n2. **BWR Grade (Boiling Water Resistant):**\n   - **Full Form:** Boiling Water Resistant Grade.\n   - **Best For:** Kitchen shutters, dining area furniture, and areas with moderate moisture.\n   - **Key Advantage:** Glued with phenol formaldehyde resin capable of resisting water exposure for up to 8 hours.\n\n3. **BWP Marine Grade Plywood:**\n   - **Full Form:** Boiling Water Proof Grade.\n   - **Best For:** Under-sink kitchen drawers, base cabinets, counter supports, and bathroom vanities.\n   - **Key Advantage:** Guaranteed to withstand boiling water for up to 72 hours without delamination.\n\n### Pro-Tips from Mahadev Ply Experts:\n- Always inspect the core for gapless plies.\n- Choose IS 710 certified BWP plywood for kitchen sink modules.\n- Coat cut edges with wood sealer or PVC edge-banding to block moisture penetration.\n    ",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuD2N01PlAE_5BswFw0Kx92f5pedvTmCTpK1dwIrapOPEayT9fki8TB0gfAz2n05savawuqRl11O8L7l7r_3206k3l29xk5yh4WljFnqRvRvJfl2-nrw4TRffYPFL3EoVvWyxIC-iaopHVeDfF46cd5FCSTvj7JnvdWy4egRbm3yr34dcPDmcOuCpqjBORYPbdh4maF0ddl1UeJNN9cqX-yslElAJirEkt0etvETRW7DsyMr_ElRs9bsYOC67Y956wjOsn0qsO7cJvm6",
+      "date": "July 15, 2026",
+      "author": "Bimal Thapa (Technical Advisor)",
+      "readTime": "4 min read"
+    },
+    {
+      "id": "blog-02",
+      "title": "The Ultimate Guide to Premium Door Handles",
+      "category": "Hardware Guide",
+      "snippet": "From brushed brass to matte black, explore the latest trends in architectural door hardware and how to match them with your interior aesthetic.",
+      "content": "\nDoor handles are the tactile handshake of your home. Selecting hardware that balances ergonomics, durability, and visual harmony elevates doors from functional dividers into architectural highlights.\n\n### Key Materials & Finishes Trending in 2026:\n- **Brushed Brass & Satin Gold:** Warm, luxurious tones that pair beautifully with natural oak veneers and deep navy walls.\n- **Matte Black PVD:** Minimalist, fingerprint-resistant finish perfect for modern Scandinavian and industrial interiors.\n- **Antique Bronze:** Timeless heritage finish crafted for traditional Nepalese carved wooden doors.\n\n### What to Check Before Purchasing:\n1. **Rosette Mount vs. Plate Mount:** Ensure your door lock mortise matches the handle mounting holes.\n2. **Spring Tension:** Quality handles use dual spring return mechanisms to avoid sag after years of use.\n3. **PVD Coating:** Physical Vapor Deposition ensures the finish won't tarnish or corrode in humid climates.\n    ",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDk9X2RZjE2ufyZRsKGn-f3otNaZkRh4gBw_bbI5SfoOPcoUYgwebOZfvn8zt-2ePvW6xDm-zeC97v2bxo1HQFPh6FhxS_4X399F_52uJqPXx9aX7NTznqMWeIeIGB1wNj9JJwzi9Gx3IVBgkJMWH_s87gJqrV_AidLqiqNXIclwVpXSSsJtEHAr0lDo5efsigSSnC1ezmR0VHLsgeSYmxSTiTqddvbSzp-86uKIBpYnGI0mwg6s7jTLDTnwbLimZl2-J5Bllmin0KM",
+      "date": "June 28, 2026",
+      "author": "Anjali Maharjan (Customer Relations)",
+      "readTime": "3 min read"
+    },
+    {
+      "id": "blog-03",
+      "title": "How to Protect Veneer Surfaces from Water Damage",
+      "category": "Maintenance",
+      "snippet": "Simple and effective maintenance routines to ensure your premium wood veneers stay pristine and resist moisture in humid environments.",
+      "content": "\nNatural wood veneers bring rich texture and organic warmth to interior spaces. However, because veneers are genuine thin wood slices, improper care can lead to surface cloudy spots or peeling.\n\n### Daily & Weekly Care Guidelines:\n1. **Dusting:** Use a soft microfiber cloth along the wood grain direction.\n2. **Moisture Prevention:** Wipe liquid spills immediately with a dry cloth. Never leave damp cups or glasses on veneer surfaces without coasters.\n3. **PU Coating Protection:** Apply a high-quality polyurethane (PU) coat or natural wax polish once a year to keep the moisture seal active.\n    ",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuBpw-Y-60-EmFBflUNsUdqgVfGh4XH5s5K6zy9MFFGBTVkIOVWAQES8rJUZ2z9Qf4ZJxVISVoQ8u8UJmKrRKbu0Qfiq3SAqrTYUkVJIud8VLG3DKetAe6wrhB2QGqlLnuH_t40gwE4Ii_V6emB4yURIbl44n77QSrYu7CgcVKJigdTKKt98XAGOuxL8kaKDlkEJMzs66l9yhRmzICznAH-7Zg2EOOzBnRzu0pctFnj4Zvly-qzkoNTYLjEISEGVr6Dp0sAfSmQy6nvY",
+      "date": "June 10, 2026",
+      "author": "Ram Prasad Shrestha (Founder)",
+      "readTime": "5 min read"
+    },
+    {
+      "id": "blog-04",
+      "title": "Introducing the Smart Security Lock Collection",
+      "category": "New Arrivals",
+      "snippet": "Upgrade your home security with our latest range of smart digital locks that blend minimalist design with cutting-edge technology.",
+      "content": "\nMahadev Ply Center is proud to launch the new 2026 Hafele & Mahadev Select Smart Lock series in our Satdobato Lalitpur showroom.\n\n### Key Features of Smart Security Locks:\n- **Biometric Fingerprint Scanner:** unlocks in <0.3 seconds.\n- **PIN Code & Emergency Keys:** Never worry about lost keys.\n- **Mobile App & Remote Unlock:** Generate guest passcodes for housekeeping or guests.\n- **Encrypted Mortise Latch:** High strength steel bolts resistant to mechanical prying.\n    ",
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuD45i8rwwS7HlqFokKJKoFzaTqZvpzcQJv1tkYYIJpJnDzp-8ds1E9QGOy3K0zFW8xxm-wHIRqUMHgk-VDv9TI3PjDNeTL9TXKG6YFEMM8pHCRm-qMvmpwUCJGwjpE1KrF3FvAd93K_hSMlokg0IOEFNgbzsYdTcfL4jdtjLev0XrWcxC51cUqTPxOreA_78ZWX5sMoSk0PKFczIsmt9lvpyXbaPUWo9RiIFAq-xovCGLZ79OuSatiFdwLKEZuhtqoqHFWg93GI_JBl",
+      "date": "May 20, 2026",
+      "author": "Suresh Karki (Logistics Manager)",
+      "readTime": "3 min read"
+    }
+  ],
+  "inquiries": [
+    {
+      "id": "inq_1001",
+      "name": "Subash Shrestha",
+      "phone": "9841234567",
+      "category": "Plywood",
+      "quantity": "45 Sheets (18mm BWP)",
+      "projectType": "Residential Villa Kitchen & Wardrobes",
+      "message": "Need price quote and delivery timeline for 18mm Marine BWP plywood for kitchen cabinets near Kupondole, Lalitpur.",
+      "city": "Lalitpur",
+      "status": "New",
+      "createdAt": "2026-07-29T12:12:56.141Z"
+    },
+    {
+      "id": "inq_1002",
+      "name": "Rohan Interior Decorators",
+      "phone": "9801987654",
+      "category": "Hardware & Locks",
+      "quantity": "12 Sets Mortise Handles + Soft Close Hinges",
+      "projectType": "Commercial Office Renovation",
+      "message": "Looking for wholesale rate on Hafele soft close drawer channels and matte black door handles for an office project in Naxal.",
+      "city": "Kathmandu",
+      "status": "In Progress",
+      "notes": "Sent catalog on WhatsApp on July 27.",
+      "createdAt": "2026-07-28T12:12:56.141Z"
+    }
+  ],
+  "siteSettings": {
+    "brandName": "Mahadev Ply Center",
+    "tagline": "YOUR INTERIOR'S CHOICE",
+    "taglineNe": "तपाईंको इन्टेरियरको उत्कृष्ट रोजाइ",
+    "phone": "01-5400921 / 9766383188",
+    "altPhone": "01-5400921",
+    "whatsappNumber": "9779766383188",
+    "email": "info@mahadevply.com",
+    "address": "Ring Road, Satdobato, Lalitpur, Nepal",
+    "storeLocation": "Satdobato Chowk, Lalitpur & Chabahil, Kathmandu",
+    "openingHours": "Sun - Fri: 10:00 AM - 7:00 PM | Sat: 10:00 AM - 12:00 PM",
+    "mapsEmbedUrl": "https://maps.google.com/maps?q=Mahadev%20Ply%20Center%20Satdobato%20Lalitpur%20Nepal&t=&z=16&ie=UTF8&iwloc=&output=embed",
+    "facebookUrl": "https://www.facebook.com/p/Mahadev-Ply-Center-61565692444993/",
+    "instagramUrl": "https://www.instagram.com/mahadevplycenter/",
+    "heroHeadline": "Nepal's Trusted Destination for Quality Plywood & Hardware",
+    "heroHeadlineNe": "गुणस्तरीय प्लाईवूड र हार्डवेयरको भरपर्दो केन्द्र",
+    "heroSubtitle": "Direct authorized distributor of CenturyPly, Greenply, Hafele & premium interior hardware. Serving Lalitpur & Kathmandu with guaranteed durability.",
+    "heroBadgeText": "Official Authorized Distributor",
+    "bannerImage": "https://lh3.googleusercontent.com/aida-public/AB6AXuDbK720HycchuXAS6hlJxEQF2kaDEw-5jcEeT7UUkduF4o-femVDnW9Xz05ASwrqJ3O-0Sebzh5KmDWsb-XBZoBzU0P3m5MWXjAkgLiZUVtL1qXWqQWY5awQv6NJ2mg51M_SvOYe2TpWTXCI24e255ib58q90iqUJVntIhu3UGSOXSCdKtRF7_RFAYTGlhWO2CU4DypH9QqbkIim9xXMZIOHkEvPI_h-ewy6TOoqcDeNB2wryAzmk0UMUW5SgSXBg7OQg5qnFQr8rh-",
+    "metaTitle": "Mahadev Ply Center | Quality Plywood, Veneers & Hardware Lalitpur Nepal",
+    "metaDescription": "Leading supplier of CenturyPly, Greenply, Veneers, Laminates, Door Locks & Kitchen Hardware in Satdobato Lalitpur & Kathmandu.",
+    "keywords": "Plywood Lalitpur, CenturyPly Nepal, Greenply Kathmandu, Hardware Store Nepal, Marine Plywood price"
+  },
+  "testimonials": [
+    {
+      "id": "t-1",
+      "name": "Er. Rajesh Maharjan",
+      "role": "Principal Architect, Skyline Designs",
+      "comment": "Mahadev Ply Center has been our go-to material supplier for over 8 years in Lalitpur. Their 100% genuine CenturyPly BWP sheets and consistent veneer quality make every project seamless.",
+      "rating": 5,
+      "active": true
+    },
+    {
+      "id": "t-2",
+      "name": "Pooja Sharma",
+      "role": "Home Owner, Jhamsikhel",
+      "comment": "The team guided us perfectly on choosing moisture-resistant plywood for our modular kitchen. Transparent pricing, authentic guarantee cards, and prompt delivery!",
+      "rating": 5,
+      "active": true
+    },
+    {
+      "id": "t-3",
+      "name": "Binod Karki",
+      "role": "Interior Contractor",
+      "comment": "Best range of architectural door locks, soft-close hinges, and natural wood veneers under one roof. Unbeatable wholesale rates for bulk orders.",
+      "rating": 5,
+      "active": true
+    }
+  ],
+  "faqs": [
+    {
+      "id": "faq-1",
+      "question": "Do you deliver plywood and hardware across Kathmandu Valley?",
+      "answer": "Yes! We provide direct door-step delivery across Lalitpur, Kathmandu, and Bhaktapur. Free delivery is available for eligible project-scale orders.",
+      "category": "Delivery & Shipping",
+      "active": true
+    },
+    {
+      "id": "faq-2",
+      "question": "How do I know if I need BWR or BWP Marine Grade Plywood?",
+      "answer": "BWR (Boiling Water Resistant) is ideal for living room furniture, wardrobes, and general kitchen shutters. BWP (Boiling Water Proof IS 710) Marine grade is essential for under-sink cabinets, bathroom vanities, and areas exposed to severe water moisture.",
+      "category": "Product Advice",
+      "active": true
+    },
+    {
+      "id": "faq-3",
+      "question": "Are your products backed by manufacturer warranty?",
+      "answer": "Absolutely. We are direct authorized dealers for CenturyPly, Greenply, and Hafele. Every purchase comes with official manufacturer authenticity guarantees.",
+      "category": "Warranty & Quality",
+      "active": true
+    }
+  ],
+  "media": [
+    {
+      "id": "med-01",
+      "filename": "hero-banner.jpg",
+      "originalName": "Mahadev Ply Storefront Banner",
+      "url": "https://lh3.googleusercontent.com/aida-public/AB6AXuDbK720HycchuXAS6hlJxEQF2kaDEw-5jcEeT7UUkduF4o-femVDnW9Xz05ASwrqJ3O-0Sebzh5KmDWsb-XBZoBzU0P3m5MWXjAkgLiZUVtL1qXWqQWY5awQv6NJ2mg51M_SvOYe2TpWTXCI24e255ib58q90iqUJVntIhu3UGSOXSCdKtRF7_RFAYTGlhWO2CU4DypH9QqbkIim9xXMZIOHkEvPI_h-ewy6TOoqcDeNB2wryAzmk0UMUW5SgSXBg7OQg5qnFQr8rh-",
+      "mimeType": "image/jpeg",
+      "size": 420000,
+      "uploadedAt": "2026-07-29T16:12:56.141Z"
+    }
+  ],
+  "activityLogs": [
+    {
+      "id": "log-01",
+      "adminEmail": "admin@mahadevply.com",
+      "adminName": "System Engine",
+      "action": "INITIALIZE_CMS_DATABASE",
+      "details": "CMS database successfully provisioned with default products, blogs, and settings.",
+      "timestamp": "2026-07-29T16:12:56.141Z"
+    }
+  ]
+}

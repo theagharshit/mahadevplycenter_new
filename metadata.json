@@ -1,0 +1,6 @@
+{
+  "name": "Mahadev Ply Center",
+  "description": "Premium plywood, veneers, laminates, and hardware solutions in Lalitpur & Kathmandu, Nepal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

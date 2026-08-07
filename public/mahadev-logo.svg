@@ -1,0 +1,43 @@
+<svg viewBox="0 0 520 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 1. Dark Blue Arch Dome Emblem -->
+  <path d="M 190,138 L 190,75 C 190,25 215,5 260,5 C 305,5 330,25 330,75 L 330,138 Z" fill="#0B2240" />
+
+  <!-- Shiva Tripundra - 3 Curved White Bands Left -->
+  <path d="M 202,60 C 222,56 242,56 250,60 C 245,68 222,68 202,65 Z" fill="#FFFFFF" />
+  <path d="M 198,80 C 222,76 242,76 248,80 C 243,88 222,88 198,85 Z" fill="#FFFFFF" />
+  <path d="M 202,100 C 222,96 242,96 246,100 C 241,108 222,108 202,105 Z" fill="#FFFFFF" />
+
+  <!-- Shiva Tripundra - 3 Curved White Bands Right -->
+  <path d="M 318,60 C 298,56 278,56 270,60 C 275,68 298,68 318,65 Z" fill="#FFFFFF" />
+  <path d="M 322,80 C 298,76 278,76 272,80 C 277,88 298,88 322,85 Z" fill="#FFFFFF" />
+  <path d="M 318,100 C 298,96 278,96 274,100 C 279,108 298,108 318,105 Z" fill="#FFFFFF" />
+
+  <!-- Golden Teardrop / Tilak -->
+  <path d="M 260,40 C 240,78 240,110 260,128 C 280,110 280,78 260,40 Z" fill="#F2B800" />
+
+  <!-- Dark Blue Trishul inside Tilak -->
+  <g fill="#0B2240">
+    <rect x="258.5" y="80" width="3" height="38" rx="1" />
+    <path d="M 260,72 L 262.5,82 L 257.5,82 Z" />
+    <path d="M 252,76 C 252,83 257.5,85 257.5,85 L 257.5,82 C 255,82 254.5,78 254.5,76 Z" />
+    <path d="M 268,76 C 268,83 262.5,85 262.5,85 L 262.5,82 C 265,82 265.5,78 265.5,76 Z" />
+    <path d="M 256,96 L 264,100 L 256,104 L 264,96 Z" />
+  </g>
+
+  <!-- 2. Main Box Outer Frame -->
+  <line x1="8" y1="138" x2="190" y2="138" stroke="#0B2240" stroke-width="3.5" />
+  <line x1="330" y1="138" x2="512" y2="138" stroke="#0B2240" stroke-width="3.5" />
+  <line x1="8" y1="136" x2="8" y2="188" stroke="#0B2240" stroke-width="3.5" />
+  <line x1="512" y1="136" x2="512" y2="188" stroke="#0B2240" stroke-width="3.5" />
+  <line x1="8" y1="188" x2="512" y2="188" stroke="#0B2240" stroke-width="3.5" />
+
+  <!-- 3. Text Inside Box: MAHADEV PLY CENTER -->
+  <text x="24" y="176" fill="#0B2240" font-family="Georgia, 'Times New Roman', serif" font-size="34" font-weight="900" letter-spacing="2.5">MAHADEV</text>
+  <text x="236" y="176" fill="#F2B800" font-family="Georgia, 'Times New Roman', serif" font-size="34" font-weight="900" letter-spacing="2.5">PLY</text>
+  <text x="330" y="176" fill="#0B2240" font-family="Georgia, 'Times New Roman', serif" font-size="34" font-weight="900" letter-spacing="2.5">CENTER</text>
+
+  <!-- 4. Tagline Below Box -->
+  <line x1="8" y1="214" x2="108" y2="214" stroke="#0B2240" stroke-width="2" />
+  <text x="260" y="219" fill="#0B2240" font-family="Georgia, 'Times New Roman', serif" font-size="16" font-weight="800" letter-spacing="3" text-anchor="middle">YOUR INTERIOR'S CHOICE</text>
+  <line x1="412" y1="214" x2="512" y2="214" stroke="#0B2240" stroke-width="2" />
+</svg>
