@@ -201,14 +201,16 @@ export const cmsApi = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, rememberMe }),
     });
-    let data: any;
+    let data: any = null;
     try {
       data = await res.json();
     } catch {
-      throw new Error(`Server error (${res.status}): ${res.statusText || 'Unable to connect to login server'}`);
+      // Ignore JSON parse error if response body is non-JSON
     }
-    if (!res.ok) throw new Error(data.error || 'Invalid credentials');
-    if (data.token) {
+    if (!res.ok) {
+      throw new Error(data?.error || `Server error (${res.status}). Please try again.`);
+    }
+    if (data?.token) {
       setAuthToken(data.token);
     }
     return data;

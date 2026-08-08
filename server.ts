@@ -919,14 +919,17 @@ app.delete('/api/admin/users/:id', authMiddleware, (req: AuthenticatedRequest, r
   res.json({ success: true, message: 'Admin user deleted.' });
 });
 
-// Unmatched API routes 404 handler
-app.all('/api*', (_req, res) => {
+// Unmatched API routes 404 handler (ensures no /api call falls through to HTML fallback)
+app.use('/api', (_req, res) => {
   res.status(404).json({ error: 'API endpoint not found' });
 });
 
-// Global API error handler
-app.use('/api*', (err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error('Server API error:', err);
+// Global Express error handler
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error('Server error:', err);
+  if (res.headersSent) {
+    return _next(err);
+  }
   res.status(500).json({ error: err?.message || 'Internal server error' });
 });
 
