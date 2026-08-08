@@ -170,7 +170,11 @@ export const cmsApi = {
   getPublicData: async (): Promise<PublicData> => {
     const res = await fetch('/api/public/data');
     if (!res.ok) throw new Error('Failed loading public website data.');
-    return res.json();
+    try {
+      return await res.json();
+    } catch {
+      throw new Error('Invalid response received from server.');
+    }
   },
 
   // Public submission
@@ -180,7 +184,12 @@ export const cmsApi = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(inquiryData),
     });
-    const data = await res.json();
+    let data: any;
+    try {
+      data = await res.json();
+    } catch {
+      throw new Error(`Server returned error ${res.status}: ${res.statusText}`);
+    }
     if (!res.ok) throw new Error(data.error || 'Failed submitting inquiry.');
     return data;
   },
@@ -192,7 +201,12 @@ export const cmsApi = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, rememberMe }),
     });
-    const data = await res.json();
+    let data: any;
+    try {
+      data = await res.json();
+    } catch {
+      throw new Error(`Server error (${res.status}): ${res.statusText || 'Unable to connect to login server'}`);
+    }
     if (!res.ok) throw new Error(data.error || 'Invalid credentials');
     if (data.token) {
       setAuthToken(data.token);
