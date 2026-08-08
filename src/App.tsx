@@ -174,7 +174,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <Footer setCurrentView={handleSetCurrentView} lang={lang} isAdminLoggedIn={Boolean(adminUser)} />
+      <Footer setCurrentView={handleSetCurrentView} lang={lang} />
 
       {/* Modals */}
       <QuoteModal

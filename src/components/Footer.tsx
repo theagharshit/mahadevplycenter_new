@@ -6,10 +6,9 @@ import { Logo } from './Logo';
 interface FooterProps {
   setCurrentView: (view: ViewType) => void;
   lang: Language;
-  isAdminLoggedIn?: boolean;
 }
 
-export const Footer: React.FC<FooterProps> = ({ setCurrentView, lang, isAdminLoggedIn }) => {
+export const Footer: React.FC<FooterProps> = ({ setCurrentView, lang }) => {
   const t = TRANSLATIONS[lang];
 
   const navigateTo = (view: ViewType) => {
@@ -146,11 +145,9 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentView, lang, isAdminLog
           <div className="flex gap-4">
             <a href="#" className="hover:underline">{lang === 'EN' ? 'Privacy Policy' : 'गोपनीयता नीति'}</a>
             <a href="#" className="hover:underline">{lang === 'EN' ? 'Terms of Service' : 'सेवाका शर्तहरू'}</a>
-            {isAdminLoggedIn && (
-              <button onClick={() => navigateTo('admin')} className="hover:underline font-semibold text-[#000d22] cursor-pointer">
-                Admin CMS Portal
-              </button>
-            )}
+            <button onClick={() => navigateTo('admin')} className="hover:underline font-semibold text-[#000d22] cursor-pointer">
+              Admin CMS Portal
+            </button>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Lock, Mail, ShieldAlert, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ShieldAlert, ArrowRight } from 'lucide-react';
 import { Logo } from '../Logo';
 import { cmsApi } from '../../lib/cmsApi';
 
@@ -9,8 +9,8 @@ interface AdminLoginProps {
 }
 
 export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackToWebsite }) => {
-  const [email, setEmail] = useState('admin@mahadevply.com');
-  const [password, setPassword] = useState('AdminPassword123!');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -38,12 +38,6 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
     }
   };
 
-  const fillDemoCredentials = () => {
-    setEmail('admin@mahadevply.com');
-    setPassword('AdminPassword123!');
-    setError(null);
-  };
-
   return (
     <div className="min-h-screen bg-[#000d22] flex flex-col justify-center items-center p-4 sm:p-6 relative overflow-hidden">
       {/* Subtle Background Glow */}
@@ -60,27 +54,6 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
           <p className="text-xs text-[#8299c0] mt-1">
             Secure management system for Mahadev Ply Center
           </p>
-        </div>
-
-        {/* First Time / Demo Credentials Hint */}
-        <div className="mb-6 p-3.5 bg-[#f2b800]/10 border border-[#f2b800]/30 rounded-2xl text-xs text-[#fed488] flex items-start gap-3">
-          <CheckCircle2 className="w-4 h-4 shrink-0 text-[#f2b800] mt-0.5" />
-          <div className="flex-grow">
-            <p className="font-semibold text-white">Default Admin Account Credentials:</p>
-            <p className="mt-0.5 text-zinc-300">
-              Email: <span className="font-mono text-amber-300">admin@mahadevply.com</span>
-            </p>
-            <p className="text-zinc-300">
-              Password: <span className="font-mono text-amber-300">AdminPassword123!</span>
-            </p>
-            <button
-              type="button"
-              onClick={fillDemoCredentials}
-              className="mt-2 text-[11px] font-bold text-[#f2b800] hover:underline cursor-pointer"
-            >
-              Autofill Credentials
-            </button>
-          </div>
         </div>
 
         {/* Error Alert */}
