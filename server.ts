@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
@@ -19,7 +22,7 @@ import {
 } from './src/server/db.js';
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'mahadev_ply_cms_super_secret_key_2026';
 
 // Uploads directory
@@ -919,6 +922,11 @@ app.delete('/api/admin/users/:id', authMiddleware, (req: AuthenticatedRequest, r
   res.json({ success: true, message: 'Admin user deleted.' });
 });
 
+// JSON 404 handler for unmatched API routes
+app.all('/api*', (_req, res) => {
+  res.status(404).json({ error: 'API endpoint not found' });
+});
+
 // ==========================================
 // VITE MIDDLEWARE / PRODUCTION STATIC SERVER
 // ==========================================
@@ -940,6 +948,11 @@ async function startServer() {
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Mahadev Ply Center CMS Server running on http://0.0.0.0:${PORT}`);
+    if (!process.env.JWT_SECRET) {
+      console.warn(
+        '[SECURITY WARNING] JWT_SECRET environment variable is not set. Using an insecure default secret. Please set a real JWT_SECRET environment variable in production.'
+      );
+    }
   });
 }
 
