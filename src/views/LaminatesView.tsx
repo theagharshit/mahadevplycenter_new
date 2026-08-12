@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Language, LaminateBrand } from '../types';
-import { cmsApi } from '../lib/cmsApi';
 import { FlipbookViewer } from '../components/FlipbookViewer';
 import {
   BookOpen,
@@ -60,13 +59,15 @@ export const LaminatesView: React.FC<LaminatesViewProps> = ({
     const fetchBrands = async () => {
       try {
         setLoading(true);
-        const data = await cmsApi.getPublicData();
-        const activeBrands = (data.laminateBrands || []).filter((b) => b.active !== false);
+        const res = await fetch('/api/public/data');
+        const data = await res.json();
+        const activeBrands = (data.laminateBrands || []).filter((b: LaminateBrand) => b.active !== false);
         setBrands(activeBrands);
 
         if (initialBrandSlug) {
+          const initLower = initialBrandSlug.toLowerCase();
           const match = activeBrands.find(
-            (b) => b.slug.toLowerCase() === initialBrandSlug.toLowerCase() || b.id === initialBrandSlug
+            (b: LaminateBrand) => (b.slug || '').toLowerCase() === initLower || b.id === initialBrandSlug
           );
           if (match) setSelectedBrand(match);
         }
@@ -86,10 +87,13 @@ export const LaminatesView: React.FC<LaminatesViewProps> = ({
   ).filter(Boolean);
 
   const filteredBrands = brands.filter((b) => {
-    const matchesSearch =
-      b.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.shortDescription.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (b.availableFinishes && b.availableFinishes.some((f) => f.toLowerCase().includes(searchQuery.toLowerCase())));
+    const sq = (searchQuery || '').toLowerCase();
+    const nameMatch = (b.name || '').toLowerCase().includes(sq);
+    const descMatch = (b.shortDescription || '').toLowerCase().includes(sq);
+    const finishMatch = Boolean(
+      b.availableFinishes && b.availableFinishes.some((f) => (f || '').toLowerCase().includes(sq))
+    );
+    const matchesSearch = nameMatch || descMatch || finishMatch;
 
     const matchesFinish =
       selectedFinish === 'All' || (b.availableFinishes && b.availableFinishes.includes(selectedFinish));

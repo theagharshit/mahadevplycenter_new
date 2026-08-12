@@ -142,12 +142,13 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentView, lang }) => {
       <div className="border-t border-[#c4c6cf] py-4 px-6 text-center text-xs text-[#43474e]">
         <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
           <span>{t.allRightsReserved}</span>
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
             <a href="#" className="hover:underline">{lang === 'EN' ? 'Privacy Policy' : 'गोपनीयता नीति'}</a>
             <a href="#" className="hover:underline">{lang === 'EN' ? 'Terms of Service' : 'सेवाका शर्तहरू'}</a>
-            <button onClick={() => navigateTo('admin')} className="hover:underline font-semibold text-[#000d22] cursor-pointer">
-              Admin CMS Portal
-            </button>
+            <a href="#admin" className="text-[#775a19] font-bold hover:underline flex items-center gap-1">
+              <span className="material-symbols-outlined text-sm">lock</span>
+              <span>{lang === 'EN' ? 'Admin Portal' : 'एडमिन पोर्टल'}</span>
+            </a>
           </div>
         </div>
       </div>

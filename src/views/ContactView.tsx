@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { Language } from '../types';
+import React, { useState, useEffect } from 'react';
+import { Language, ContactPageContent, SiteSettings } from '../types';
 import { TRANSLATIONS } from '../data/translations';
 import { Logo } from '../components/Logo';
-import { cmsApi } from '../lib/cmsApi';
 
 interface ContactViewProps {
   lang: Language;
@@ -14,6 +13,19 @@ export const ContactView: React.FC<ContactViewProps> = ({
   onSuccessToast,
 }) => {
   const t = TRANSLATIONS[lang];
+
+  const [contactData, setContactData] = useState<ContactPageContent | null>(null);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+
+  useEffect(() => {
+    fetch('/api/public/data')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.contactContent) setContactData(data.contactContent);
+        if (data.siteSettings) setSiteSettings(data.siteSettings);
+      })
+      .catch((err) => console.error('Failed fetching contact page data:', err));
+  }, []);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -27,13 +39,19 @@ export const ContactView: React.FC<ContactViewProps> = ({
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await cmsApi.submitInquiry({
-        name: formData.name,
-        phone: formData.phone,
-        category: formData.productInterest,
-        message: formData.message,
-        projectType: 'Contact Page Inquiry',
+      const res = await fetch('/api/public/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          category: formData.productInterest,
+          message: formData.message,
+          projectType: 'Contact Page Inquiry',
+        }),
       });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed submitting inquiry.');
       onSuccessToast(t.successToast);
       setFormData({
         name: '',
@@ -66,8 +84,18 @@ export const ContactView: React.FC<ContactViewProps> = ({
           </p>
         </div>
 
-        <div className="flex-1 hidden md:flex items-center justify-center p-8 rounded-2xl bg-white shadow-sm border border-[#c4c6cf]">
-          <Logo variant="full" className="h-28" />
+        <div className="flex-1 hidden md:flex items-center justify-center rounded-2xl bg-white shadow-sm border border-[#c4c6cf] overflow-hidden relative min-h-[220px]">
+          {contactData?.showroomImage ? (
+            <img
+              src={contactData.showroomImage}
+              alt="Mahadev Ply Center Showroom"
+              className="w-full h-full object-cover max-h-[260px]"
+            />
+          ) : (
+            <div className="p-8">
+              <Logo variant="full" className="h-28" />
+            </div>
+          )}
         </div>
       </section>
 

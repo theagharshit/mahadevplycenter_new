@@ -1,5 +1,5 @@
-import React from 'react';
-import { ViewType, Language, TeamMember } from '../types';
+import React, { useState, useEffect } from 'react';
+import { ViewType, Language, TeamMember, AboutPageContent } from '../types';
 import { TRANSLATIONS } from '../data/translations';
 import { Logo } from '../components/Logo';
 
@@ -9,57 +9,73 @@ interface AboutViewProps {
   onOpenQuoteModal: () => void;
 }
 
+const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
+  {
+    name: 'Ram Prasad Shrestha',
+    role: 'Founder & Managing Director',
+    roleNe: 'संस्थापक तथा प्रबन्ध निर्देशक',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuCxn2PTgLWU6V-2pPbXzDjvw1dqepAM6TeEA6UeTyVh4fAHAe0HmqGYgBTs3XRtkLnGFd3X50MFIklULdfiLKGXFU-xNIQ92p1nef3orEWufbZbRfWEzhrVgn1wBevxlbtZ4VhIRb_ccxkNodOS3OHkp5-BtM0lnlG61YQpJGCsitSIvqMofZeMerD13UTuqHJRm7cPNtgGzepT14KGGMcO-VrJDfTcSotGrRoB-LgNdg9g6QvFJR0pKMQBYPBaxKo0J3gPnN33KFsH',
+    altText: 'Ram Prasad Shrestha headshot',
+  },
+  {
+    name: 'Anjali Maharjan',
+    role: 'Head of Customer Relations',
+    roleNe: 'ग्राहक सम्बन्ध प्रमुख',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuB-miAz7MQxuIt1NPudx_q_jYqD1Y8YagbZt88-X1JIRHhUWuuQxZEFEOKMoRoVFm5xYE9Ob5bnyiLCMkilz3tCE8queBSSHqKztz50r6Qo9yeyiXsfNg9cskm_tM0SOnRrFdpABGGqvHNh5wWlrQrHglm2pJC0JxCQYFQbokmaujq3MByDao9tUV8UyQrLc2gZYzkF_vj3z7S8XO5eyrYZwFWmE7Sr76Mjo0vZv_BHCB8QjtZ-jnU982_n9qAG-dTABxTqmTGyU5oN',
+    altText: 'Anjali Maharjan portrait',
+  },
+  {
+    name: 'Bimal Thapa',
+    role: 'Technical Advisor',
+    roleNe: 'प्राविधिक सल्लाहकार',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuD42xy08oQt9N5Hz5qtJT56pnPyqxyDVUrOPhpo8_1Nxgb1_mKd-nG2PUyZs-3GaTMjrkQlSD_c9rsGqA2enSaF34_Cow71HdBQDWZAtVT27jND4NC7uYlNGEezdz79w7YX_KljweiDLlqwaVTXlnq4Gg51-KTB2KuF15lTEFynziKDdu7OR_07SdfNOyeNj9lrq4l7b7wSxwIVvQN_hmOHyTjVeESW3EQT1AJRoQsx2yLqyrUPCz3_4j8hX-zAVR5HCSU5az0NlsxX',
+    altText: 'Bimal Thapa headshot',
+  },
+  {
+    name: 'Suresh Karki',
+    role: 'Logistics Manager',
+    roleNe: 'लजिस्टिक म्यानेजर',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuDJBoNcE2C5RUrkUmIfv7DEERGUtqvrvIaMk2O4c6zxzj8X3A_X65p_y2PrVWzAL2EM5rSfTsmLWoMwKP0Zs_7MZlNHf6QMYVdGP5Zt9HHcOILv91i6CCU-DgjQ4fWJluljcuZMzjb5z97UyjMKJrbOyL28rzjM312zi-mTJaVQ6Sg3Hy17KZxsL0tP-Bfe-BpQodMaP7gRI8ZPK_WacE-BcntFyIsTdCn_45Nipa03OAszBCBO78rmBWQoqXlBWaFbjTOCFJYbCOfd',
+    altText: 'Suresh Karki portrait',
+  },
+];
+
 export const AboutView: React.FC<AboutViewProps> = ({
   setCurrentView,
   lang,
   onOpenQuoteModal,
 }) => {
   const t = TRANSLATIONS[lang];
+  const [aboutContent, setAboutContent] = useState<AboutPageContent | null>(null);
 
-  const teamMembers: TeamMember[] = [
-    {
-      name: 'Ram Prasad Shrestha',
-      role: 'Founder & Managing Director',
-      roleNe: 'संस्थापक तथा प्रबन्ध निर्देशक',
-      image:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuCxn2PTgLWU6V-2pPbXzDjvw1dqepAM6TeEA6UeTyVh4fAHAe0HmqGYgBTs3XRtkLnGFd3X50MFIklULdfiLKGXFU-xNIQ92p1nef3orEWufbZbRfWEzhrVgn1wBevxlbtZ4VhIRb_ccxkNodOS3OHkp5-BtM0lnlG61YQpJGCsitSIvqMofZeMerD13UTuqHJRm7cPNtgGzepT14KGGMcO-VrJDfTcSotGrRoB-LgNdg9g6QvFJR0pKMQBYPBaxKo0J3gPnN33KFsH',
-      altText: 'Ram Prasad Shrestha headshot',
-    },
-    {
-      name: 'Anjali Maharjan',
-      role: 'Head of Customer Relations',
-      roleNe: 'ग्राहक सम्बन्ध प्रमुख',
-      image:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuB-miAz7MQxuIt1NPudx_q_jYqD1Y8YagbZt88-X1JIRHhUWuuQxZEFEOKMoRoVFm5xYE9Ob5bnyiLCMkilz3tCE8queBSSHqKztz50r6Qo9yeyiXsfNg9cskm_tM0SOnRrFdpABGGqvHNh5wWlrQrHglm2pJC0JxCQYFQbokmaujq3MByDao9tUV8UyQrLc2gZYzkF_vj3z7S8XO5eyrYZwFWmE7Sr76Mjo0vZv_BHCB8QjtZ-jnU982_n9qAG-dTABxTqmTGyU5oN',
-      altText: 'Anjali Maharjan portrait',
-    },
-    {
-      name: 'Bimal Thapa',
-      role: 'Technical Advisor',
-      roleNe: 'प्राविधिक सल्लाहकार',
-      image:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuD42xy08oQt9N5Hz5qtJT56pnPyqxyDVUrOPhpo8_1Nxgb1_mKd-nG2PUyZs-3GaTMjrkQlSD_c9rsGqA2enSaF34_Cow71HdBQDWZAtVT27jND4NC7uYlNGEezdz79w7YX_KljweiDLlqwaVTXlnq4Gg51-KTB2KuF15lTEFynziKDdu7OR_07SdfNOyeNj9lrq4l7b7wSxwIVvQN_hmOHyTjVeESW3EQT1AJRoQsx2yLqyrUPCz3_4j8hX-zAVR5HCSU5az0NlsxX',
-      altText: 'Bimal Thapa headshot',
-    },
-    {
-      name: 'Suresh Karki',
-      role: 'Logistics Manager',
-      roleNe: 'लजिस्टिक म्यानेजर',
-      image:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuDJBoNcE2C5RUrkUmIfv7DEERGUtqvrvIaMk2O4c6zxzj8X3A_X65p_y2PrVWzAL2EM5rSfTsmLWoMwKP0Zs_7MZlNHf6QMYVdGP5Zt9HHcOILv91i6CCU-DgjQ4fWJluljcuZMzjb5z97UyjMKJrbOyL28rzjM312zi-mTJaVQ6Sg3Hy17KZxsL0tP-Bfe-BpQodMaP7gRI8ZPK_WacE-BcntFyIsTdCn_45Nipa03OAszBCBO78rmBWQoqXlBWaFbjTOCFJYbCOfd',
-      altText: 'Suresh Karki portrait',
-    },
-  ];
+  useEffect(() => {
+    fetch('/api/public/data')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.aboutContent) {
+          setAboutContent(data.aboutContent);
+        }
+      })
+      .catch((err) => console.error('Failed fetching about content:', err));
+  }, []);
+
+  const teamMembers = aboutContent?.teamMembers?.length ? aboutContent.teamMembers : DEFAULT_TEAM_MEMBERS;
 
   return (
     <div className="w-full bg-[#fcf9f8]">
       {/* Hero Header */}
       <section className="relative w-full h-[60vh] min-h-[450px] flex items-center overflow-hidden bg-[#000d22] text-white">
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-40"
+          className="absolute inset-0 bg-cover bg-center opacity-40 transition-all duration-500"
           style={{
-            backgroundImage:
-              "url('https://lh3.googleusercontent.com/aida-public/AB6AXuA3llWq8ystHZF3SZDQ1OHhV3AMqlJhyQy_MK3cWR7gOzzUMmobj3zHWpHtpn-Gcv8TcC-TIi_nrGoKampICAZpIqv2H9lEYqyFBxJ9HJW6_MQYofSiNPcSd6lyb-lH96EFXzSdLBwgTVkpZHH7PFPjB-ITFudi7bkRYGGfz5lNlt7mdoIo6lOSklvtDD0xgCMk0yo-qvc2nfMIwj3etOfE6TIlCPR1SB6e2Y3vYLONMmSp_5irOaqwjDC6Dqa9ymh8Z9dCV-8VTkFV')",
+            backgroundImage: `url('${
+              aboutContent?.heroImage ||
+              "https://lh3.googleusercontent.com/aida-public/AB6AXuA3llWq8ystHZF3SZDQ1OHhV3AMqlJhyQy_MK3cWR7gOzzUMmobj3zHWpHtpn-Gcv8TcC-TIi_nrGoKampICAZpIqv2H9lEYqyFBxJ9HJW6_MQYofSiNPcSd6lyb-lH96EFXzSdLBwgTVkpZHH7PFPjB-ITFudi7bkRYGGfz5lNlt7mdoIo6lOSklvtDD0xgCMk0yo-qvc2nfMIwj3etOfE6TIlCPR1SB6e2Y3vYLONMmSp_5irOaqwjDC6Dqa9ymh8Z9dCV-8VTkFV'"
+            }')`,
           }}
         />
         <div className="absolute inset-0 bg-black/50" />
@@ -117,7 +133,10 @@ export const AboutView: React.FC<AboutViewProps> = ({
             <div className="relative">
               <div className="aspect-square bg-[#f0eded] rounded-2xl overflow-hidden border border-[#c4c6cf]">
                 <img
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBV0rVz0kKsuvZhmNg_S9R-bTED--8g2WkZVOudUNwVPDqvQph2rHNgxUSuNMvqjLiN7vFVBIPuQUrtkZ_lWbbIIdyRjmYns655xpsqAug7IQcQpUonJIj8eOVahJWdtrMJFMl8K4SyvhfcJffWzCrp8HM1iq7N46JAqv6L6BNNo_AHMb-xPI5Q3zBcMArLm09GG5GHu6JJqtXfPChGTgJKsx4uo47gbw1OMTXQredrb-5gk_0jZXmPYrOdaNuZWziUo65Qc5DTnyg6"
+                  src={
+                    aboutContent?.storyImage ||
+                    'https://lh3.googleusercontent.com/aida-public/AB6AXuBV0rVz0kKsuvZhmNg_S9R-bTED--8g2WkZVOudUNwVPDqvQph2rHNgxUSuNMvqjLiN7vFVBIPuQUrtkZ_lWbbIIdyRjmYns655xpsqAug7IQcQpUonJIj8eOVahJWdtrMJFMl8K4SyvhfcJffWzCrp8HM1iq7N46JAqv6L6BNNo_AHMb-xPI5Q3zBcMArLm09GG5GHu6JJqtXfPChGTgJKsx4uo47gbw1OMTXQredrb-5gk_0jZXmPYrOdaNuZWziUo65Qc5DTnyg6'
+                  }
                   alt="Wood grain texture"
                   className="w-full h-full object-cover"
                 />

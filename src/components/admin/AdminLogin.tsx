@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Lock, Mail, ShieldAlert, ArrowRight } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowLeft, LogIn } from 'lucide-react';
 import { Logo } from '../Logo';
-import { cmsApi } from '../../lib/cmsApi';
 
 interface AdminLoginProps {
   onLoginSuccess: (user: any) => void;
@@ -16,133 +15,146 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError('Please enter both email and password.');
-      return;
-    }
-
     setLoading(true);
     setError(null);
 
     try {
-      const result = await cmsApi.login(email, password, rememberMe);
-      if (result.user) {
-        onLoginSuccess(result.user);
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, rememberMe }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to authenticate.');
       }
+
+      if (data.token) {
+        localStorage.setItem('admin_token', data.token);
+      }
+
+      onLoginSuccess(data.user);
     } catch (err: any) {
-      setError(err.message || 'Failed to authenticate. Please check your credentials.');
+      setError(err.message || 'Login failed. Please check credentials.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#000d22] flex flex-col justify-center items-center p-4 sm:p-6 relative overflow-hidden">
-      {/* Subtle Background Glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#f2b800]/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-[#fcf9f8] text-[#1c1b1b] flex flex-col justify-center items-center p-4 relative overflow-hidden">
+      {/* Background Decor */}
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#775a19]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[#000d22]/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Main Login Card */}
-      <div className="w-full max-w-md bg-[#0b2240] border border-[#1e3a66] rounded-3xl p-6 sm:p-8 shadow-2xl relative z-10">
-        {/* Brand Header */}
+      {/* Back Button */}
+      <button
+        onClick={onBackToWebsite}
+        className="absolute top-6 left-6 flex items-center gap-2 text-sm text-[#000d22] font-medium hover:text-[#775a19] transition-colors bg-white px-4 py-2 rounded-xl border border-[#c4c6cf] shadow-xs"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back to Storefront
+      </button>
+
+      <div className="w-full max-w-md bg-white border border-[#e5e2e1] rounded-2xl shadow-xl p-8 relative z-10">
+        {/* Header Branding */}
         <div className="text-center mb-8">
-          <div className="inline-block mb-3 p-2 rounded-2xl bg-white/5 border border-white/10 backdrop-blur">
-            <Logo variant="full" className="h-16" lightText />
+          <div className="inline-flex items-center justify-center p-3 bg-[#fcf9f8] border border-[#e5e2e1] rounded-2xl mb-4">
+            <Logo variant="full" className="h-10" />
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Admin CMS Portal</h1>
-          <p className="text-xs text-[#8299c0] mt-1">
-            Secure management system for Mahadev Ply Center
+          <h1 className="text-2xl font-bold text-[#000d22] tracking-tight flex items-center justify-center gap-2">
+            <ShieldCheck className="w-6 h-6 text-[#775a19]" />
+            Admin CMS Portal
+          </h1>
+          <p className="text-sm text-[#43474e] mt-1">
+            Mahadev Ply Center Central Control System
           </p>
         </div>
 
-        {/* Error Alert */}
+        {/* Error Notification */}
         {error && (
-          <div className="mb-6 p-3.5 bg-red-500/10 border border-red-500/30 rounded-2xl text-xs text-red-200 flex items-center gap-2.5">
-            <ShieldAlert className="w-4 h-4 shrink-0 text-red-400" />
-            <span>{error}</span>
+          <div className="mb-6 p-3 bg-rose-50 border border-rose-200 rounded-xl text-sm text-rose-700 text-center">
+            {error}
           </div>
         )}
 
-        {/* Form */}
-        <form onSubmit={handleLogin} className="space-y-4">
+        {/* Login Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-xs font-semibold text-zinc-300 mb-1.5 uppercase tracking-wider">
-              Email Address
+            <label className="block text-xs font-semibold uppercase tracking-wider text-[#43474e] mb-2">
+              Email Address / Username
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+              <Mail className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
-                type="email"
+                type="text"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@mahadevply.com"
-                className="w-full bg-[#03152c] border border-[#1e3a66] text-white text-sm rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-[#f2b800] focus:ring-1 focus:ring-[#f2b800] transition-colors"
+                className="w-full bg-white border border-[#c4c6cf] text-[#1c1b1b] pl-11 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#000d22] focus:border-transparent text-sm outline-none transition"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-zinc-300 mb-1.5 uppercase tracking-wider">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-[#43474e] mb-2">
               Password
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+              <Lock className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full bg-[#03152c] border border-[#1e3a66] text-white text-sm rounded-xl pl-10 pr-10 py-3 focus:outline-none focus:border-[#f2b800] focus:ring-1 focus:ring-[#f2b800] transition-colors"
+                className="w-full bg-white border border-[#c4c6cf] text-[#1c1b1b] pl-11 pr-11 py-3 rounded-xl focus:ring-2 focus:ring-[#000d22] focus:border-transparent text-sm outline-none transition"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#000d22]"
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-xs pt-1">
-            <label className="flex items-center gap-2 cursor-pointer text-zinc-300">
+          <div className="flex items-center justify-between text-xs text-[#43474e]">
+            <label className="flex items-center gap-2 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="rounded border-[#1e3a66] bg-[#03152c] text-[#f2b800] focus:ring-[#f2b800]"
+                className="w-4 h-4 rounded border-[#c4c6cf] text-[#000d22] focus:ring-[#000d22]"
               />
-              <span>Remember session (30 days)</span>
+              Keep me signed in
             </label>
+            <span className="text-[#775a19] hover:underline cursor-pointer">Security Policy</span>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 bg-[#f2b800] hover:bg-[#d9a500] text-[#000d22] font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="w-full bg-[#000d22] hover:bg-[#002349] text-white font-medium py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? (
-              <span className="inline-block w-5 h-5 border-2 border-[#000d22] border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>
-                <span>Sign In to Admin Panel</span>
-                <ArrowRight className="w-4 h-4" />
+                <LogIn className="w-5 h-5 text-[#e9c176]" />
+                Sign In to Dashboard
               </>
             )}
           </button>
         </form>
 
-        <div className="mt-6 pt-6 border-t border-white/10 text-center">
-          <button
-            type="button"
-            onClick={onBackToWebsite}
-            className="text-xs text-zinc-400 hover:text-white transition-colors underline cursor-pointer"
-          >
-            ← Return to Public Website
-          </button>
+        <div className="mt-8 pt-6 border-t border-[#e5e2e1] text-center text-xs text-slate-400">
+          Protected by Enterprise Session & Audit Logging
         </div>
       </div>
     </div>

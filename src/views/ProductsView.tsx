@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Product, ProductCategory, ProductApplication, Language } from '../types';
+import { Product, ProductCategory, ProductApplication, Language, CategoryCatalogue } from '../types';
 import { PRODUCTS } from '../data/products';
 import { TRANSLATIONS } from '../data/translations';
-import { CategoryCatalogue, cmsApi } from '../lib/cmsApi';
 import { FlipbookViewer } from '../components/FlipbookViewer';
 import {
   BookOpen,
@@ -160,14 +159,14 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
   const [categoryCatalogues, setCategoryCatalogues] = useState<CategoryCatalogue[]>([]);
 
   useEffect(() => {
-    cmsApi
-      .getPublicData()
+    fetch('/api/public/data')
+      .then((res) => res.json())
       .then((res) => {
-        if (res.products && res.products.length > 0) {
+        if (Array.isArray(res.products)) {
           setProductsData(res.products);
         }
-        if (res.categories && res.categories.length > 0) {
-          const cats = res.categories.map((c) =>
+        if (Array.isArray(res.categories) && res.categories.length > 0) {
+          const cats = res.categories.map((c: string) =>
             c === 'Laminates' ? 'Laminates (Formica)' : c
           );
           if (!cats.includes('Laminates (Formica)')) {
@@ -198,6 +197,7 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedApplications, setSelectedApplications] = useState<ProductApplication[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [selectedStockFilter, setSelectedStockFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'default' | 'name' | 'grade'>('default');
   const [visibleCount, setVisibleCount] = useState<number>(6);
   const [viewMode, setViewMode] = useState<'grid' | 'catalogues'>('grid');
@@ -259,19 +259,20 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
     setSelectedCategories([]);
     setSelectedApplications([]);
     setSelectedBrands([]);
+    setSelectedStockFilter('all');
   };
 
-  const getCategoryPdfUrl = (catName: string): string | undefined => {
-    if (catName === 'All Products') {
+  const getCategoryPdfUrl = (catName?: string): string | undefined => {
+    if (!catName || catName === 'All Products') {
       return undefined;
     }
 
     const lower = catName.toLowerCase();
-    const found = categoryCatalogues.find(
+    const found = (categoryCatalogues || []).find(
       (c) =>
-        c.category.toLowerCase() === lower ||
-        (lower.includes('laminate') && c.category.toLowerCase().includes('laminate')) ||
-        (lower.includes('plywood') && c.category.toLowerCase().includes('plywood'))
+        c?.category?.toLowerCase() === lower ||
+        (lower.includes('laminate') && c?.category?.toLowerCase()?.includes('laminate')) ||
+        (lower.includes('plywood') && c?.category?.toLowerCase()?.includes('plywood'))
     );
 
     if (found && found.pdfUrl && found.pdfUrl.trim() !== '') {
@@ -334,13 +335,16 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
           return false;
         }
         // Search query
-        if (
-          searchQuery &&
-          !product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          !product.description.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          !product.grade.toLowerCase().includes(searchQuery.toLowerCase())
-        ) {
-          return false;
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const nameMatch = (product.name || '').toLowerCase().includes(q);
+          const descMatch = (product.description || '').toLowerCase().includes(q);
+          const gradeMatch = (product.grade || '').toLowerCase().includes(q);
+          const brandMatch = (product.brand || '').toLowerCase().includes(q);
+          const catMatch = (product.category || '').toLowerCase().includes(q);
+          if (!nameMatch && !descMatch && !gradeMatch && !brandMatch && !catMatch) {
+            return false;
+          }
         }
         // Category checkboxes
         if (
@@ -364,6 +368,16 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
         if (selectedBrands.length > 0 && !selectedBrands.includes(product.brand)) {
           return false;
         }
+        // Stock Status filter
+        if (selectedStockFilter !== 'all') {
+          if (selectedStockFilter === 'in_stock') {
+            if (product.stockStatus === 'out_of_stock' || product.stockStatus === 'on_demand' || product.inStock === false) return false;
+          } else if (selectedStockFilter === 'out_of_stock') {
+            if (product.stockStatus !== 'out_of_stock' && product.inStock !== false) return false;
+          } else if (selectedStockFilter === 'on_demand') {
+            if (product.stockStatus !== 'on_demand') return false;
+          }
+        }
         return true;
       })
       .sort((a, b) => {
@@ -377,6 +391,7 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
     selectedCategories,
     selectedApplications,
     selectedBrands,
+    selectedStockFilter,
     sortBy,
     productsData,
   ]);
@@ -594,6 +609,34 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
                         />
                         <span className="text-[#43474e] group-hover:text-[#000d22] transition-colors">
                           {brand}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Availability Status */}
+                <div>
+                  <h4 className="font-bold text-xs text-[#000d22] uppercase tracking-wider mb-3">
+                    {lang === 'EN' ? 'Availability' : 'उपलब्धता'}
+                  </h4>
+                  <div className="space-y-2 text-xs">
+                    {[
+                      { id: 'all', labelEn: 'All Statuses', labelNe: 'सबै स्थिति' },
+                      { id: 'in_stock', labelEn: 'In Stock', labelNe: 'स्टकमा उपलब्ध' },
+                      { id: 'on_demand', labelEn: 'On Demand', labelNe: 'माग अनुसार' },
+                      { id: 'out_of_stock', labelEn: 'Out of Stock', labelNe: 'स्टकमा छैन' },
+                    ].map((st) => (
+                      <label key={st.id} className="flex items-center gap-2.5 cursor-pointer group">
+                        <input
+                          type="radio"
+                          name="stockFilter"
+                          checked={selectedStockFilter === st.id}
+                          onChange={() => setSelectedStockFilter(st.id)}
+                          className="w-4 h-4 text-[#000d22] focus:ring-[#000d22] accent-[#000d22]"
+                        />
+                        <span className="text-[#43474e] group-hover:text-[#000d22] transition-colors font-medium">
+                          {lang === 'EN' ? st.labelEn : st.labelNe}
                         </span>
                       </label>
                     ))}

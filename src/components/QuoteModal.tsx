@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Language, QuoteRequest } from '../types';
 import { TRANSLATIONS } from '../data/translations';
 import { Logo } from './Logo';
-import { cmsApi } from '../lib/cmsApi';
 
 interface QuoteModalProps {
   isOpen: boolean;
@@ -37,7 +36,13 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await cmsApi.submitInquiry(formData);
+      const res = await fetch('/api/public/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed submitting quote inquiry.');
       onSuccess(t.successToast);
       onClose();
     } catch (err: any) {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BlogPost, Language } from '../types';
 import { BLOG_POSTS } from '../data/blogs';
 import { TRANSLATIONS } from '../data/translations';
@@ -11,6 +11,20 @@ interface BlogViewProps {
 export const BlogView: React.FC<BlogViewProps> = ({ lang, onSelectPost }) => {
   const t = TRANSLATIONS[lang];
   const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [postsData, setPostsData] = useState<BlogPost[]>(BLOG_POSTS);
+
+  useEffect(() => {
+    fetch('/api/public/data')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.blogPosts && Array.isArray(data.blogPosts) && data.blogPosts.length > 0) {
+          setPostsData(data.blogPosts);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed fetching blog posts:', err);
+      });
+  }, []);
 
   const categories = [
     'All',
@@ -22,8 +36,8 @@ export const BlogView: React.FC<BlogViewProps> = ({ lang, onSelectPost }) => {
 
   const filteredPosts =
     activeCategory === 'All'
-      ? BLOG_POSTS
-      : BLOG_POSTS.filter((p) => p.category === activeCategory);
+      ? postsData
+      : postsData.filter((p) => p.category === activeCategory);
 
   return (
     <div className="w-full bg-[#fcf9f8] py-12 pb-20 min-h-screen">

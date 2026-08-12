@@ -12,58 +12,14 @@ import { QuoteModal } from './components/QuoteModal';
 import { ProductDetailModal } from './components/ProductDetailModal';
 import { BlogDetailModal } from './components/BlogDetailModal';
 import { Toast } from './components/Toast';
-import { AdminLogin } from './components/admin/AdminLogin';
-import { AdminLayout } from './components/admin/AdminLayout';
-import { cmsApi } from './lib/cmsApi';
+import { AdminApp } from './components/admin/AdminApp';
 
 export default function App() {
-  // Determine initial view based on URL path or hash
-  const getInitialView = (): ViewType => {
-    const path = window.location.pathname.toLowerCase();
-    const hash = window.location.hash.toLowerCase();
-    if (path.startsWith('/admin') || hash.includes('admin')) {
-      return 'admin';
-    }
-    return 'home';
-  };
-
-  const [currentView, setCurrentView] = useState<ViewType>(getInitialView);
+  const [currentView, setCurrentView] = useState<ViewType>('home');
   const [lang, setLang] = useState<Language>('EN');
-
-  // Sync URL history on view change
-  const handleSetCurrentView = (view: ViewType) => {
-    setCurrentView(view);
-    if (view === 'admin') {
-      if (!window.location.pathname.startsWith('/admin')) {
-        window.history.pushState({}, '', '/admin');
-      }
-    } else {
-      if (window.location.pathname.startsWith('/admin')) {
-        window.history.pushState({}, '', '/');
-      }
-    }
-  };
-
-  useEffect(() => {
-    const handlePopState = () => {
-      const path = window.location.pathname.toLowerCase();
-      const hash = window.location.hash.toLowerCase();
-      if (path.startsWith('/admin') || hash.includes('admin')) {
-        setCurrentView('admin');
-      } else {
-        setCurrentView('home');
-      }
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
-
-  // Admin Auth State
-  const [adminUser, setAdminUser] = useState<any>(() => {
-    const saved = localStorage.getItem('mahadev_admin_user');
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [isAdminView, setIsAdminView] = useState<boolean>(
+    window.location.hash === '#admin' || window.location.pathname.startsWith('/admin')
+  );
 
   // Modals state
   const [quoteModalOpen, setQuoteModalOpen] = useState(false);
@@ -75,38 +31,35 @@ export default function App() {
   // Toast state
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash === '#admin' || window.location.pathname.startsWith('/admin')) {
+        setIsAdminView(true);
+      } else {
+        setIsAdminView(false);
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const handleSetCurrentView = (view: ViewType) => {
+    setCurrentView(view);
+  };
+
   const handleOpenQuoteModal = (productName?: string) => {
     setPrefillProduct(productName);
     setQuoteModalOpen(true);
   };
 
-  const handleLoginSuccess = (user: any) => {
-    setAdminUser(user);
-    localStorage.setItem('mahadev_admin_user', JSON.stringify(user));
-  };
-
-  const handleLogout = () => {
-    cmsApi.logout();
-    setAdminUser(null);
-    localStorage.removeItem('mahadev_admin_user');
-    handleSetCurrentView('home');
-  };
-
-  // If viewing admin route, render admin views separately
-  if (currentView === 'admin') {
-    if (!adminUser) {
-      return (
-        <AdminLogin
-          onLoginSuccess={handleLoginSuccess}
-          onBackToWebsite={() => handleSetCurrentView('home')}
-        />
-      );
-    }
+  if (isAdminView) {
     return (
-      <AdminLayout
-        currentUser={adminUser}
-        onLogout={handleLogout}
-        onBackToWebsite={() => handleSetCurrentView('home')}
+      <AdminApp
+        onBackToWebsite={() => {
+          window.location.hash = '';
+          setIsAdminView(false);
+        }}
       />
     );
   }

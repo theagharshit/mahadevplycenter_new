@@ -1,520 +1,352 @@
-import React, { useState } from 'react';
-import { LaminateBrand } from '../../types';
-import { cmsApi } from '../../lib/cmsApi';
+import React, { useState, useEffect } from 'react';
+import { authFetch } from '../../utils/api';
 import {
+  Layers,
   Plus,
   Edit2,
   Trash2,
   FileText,
-  Upload,
-  Check,
-  X,
   BookOpen,
-  Sparkles,
+  CheckCircle,
+  X,
   Search,
-  Eye,
-  EyeOff,
-  Layers,
-  Star,
-  Loader2,
+  ExternalLink,
 } from 'lucide-react';
+import { LaminateBrand } from '../../types';
+import { ImagePicker } from './ImagePicker';
 
-interface LaminateBrandsManagerProps {
-  brands: LaminateBrand[];
-  onRefresh: () => void;
-}
-
-export const LaminateBrandsManager: React.FC<LaminateBrandsManagerProps> = ({
-  brands,
-  onRefresh,
-}) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [editingBrand, setEditingBrand] = useState<Partial<LaminateBrand> | null>(null);
+export const LaminateBrandsManager: React.FC = () => {
+  const [brands, setBrands] = useState<LaminateBrand[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [uploadingPdf, setUploadingPdf] = useState(false);
-  const [uploadingCover, setUploadingCover] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [editingBrand, setEditingBrand] = useState<LaminateBrand | null>(null);
 
-  const filteredBrands = brands.filter((b) =>
-    b.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    b.shortDescription.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const [formData, setFormData] = useState<Partial<LaminateBrand>>({
+    name: '',
+    slug: '',
+    shortDescription: '',
+    description: '',
+    pdfUrl: '',
+    logo: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=200',
+    coverImage: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1200',
+    availableFinishes: ['High Gloss', 'Silky Matt', 'Suede Finish'],
+    thickness: '1.0mm',
+    warranty: '10 Years Warranty',
+    active: true,
+    isFeatured: true,
+    displayOrder: 1,
+  });
 
-  const handleOpenAdd = () => {
-    setEditingBrand({
-      name: '',
-      slug: '',
-      logo: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=200',
-      coverImage: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1200',
-      bannerImage: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1600',
-      shortDescription: '',
-      description: '',
-      pdfUrl: '',
-      availableFinishes: ['High Gloss', 'Matte', 'Suede'],
-      availableCollections: ['Woodgrain', 'Solid Colors'],
-      applications: ['Modular Kitchen Shutters', 'Wardrobe Doors'],
-      benefits: ['100% Phenolic Core', 'Waterproof', 'Scratch Resistant'],
-      thickness: '0.8mm - 1.0mm',
-      warranty: '10 Years Manufacturer Warranty',
-      displayOrder: brands.length + 1,
-      active: true,
-      isFeatured: false,
-    });
-    setError(null);
-    setIsModalOpen(true);
+  const fetchBrands = async () => {
+    try {
+      setLoading(true);
+      const res = await authFetch('/api/admin/laminates');
+      const data = await res.json();
+      setBrands(data.laminateBrands || []);
+    } catch (err) {
+      console.error('Failed loading laminate brands:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleOpenEdit = (brand: LaminateBrand) => {
-    setEditingBrand({ ...brand });
-    setError(null);
+  useEffect(() => {
+    fetchBrands();
+  }, []);
+
+  const handleOpenModal = (brand?: LaminateBrand) => {
+    if (brand) {
+      setEditingBrand(brand);
+      setFormData(brand);
+    } else {
+      setEditingBrand(null);
+      setFormData({
+        name: '',
+        slug: '',
+        shortDescription: '',
+        description: '',
+        pdfUrl: '',
+        logo: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=200',
+        coverImage: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1200',
+        availableFinishes: ['High Gloss', 'Silky Matt', 'Suede Finish'],
+        thickness: '1.0mm',
+        warranty: '10 Years Warranty',
+        active: true,
+        isFeatured: true,
+        displayOrder: brands.length + 1,
+      });
+    }
     setIsModalOpen(true);
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingBrand || !editingBrand.name) {
-      setError('Brand name is required.');
-      return;
-    }
-
     try {
-      setSaving(true);
-      setError(null);
+      const url = editingBrand
+        ? `/api/admin/laminates/${editingBrand.id}`
+        : '/api/admin/laminates';
+      const method = editingBrand ? 'PUT' : 'POST';
 
-      if (editingBrand.id) {
-        await cmsApi.updateLaminateBrand(editingBrand.id, editingBrand);
-      } else {
-        await cmsApi.createLaminateBrand(editingBrand);
-      }
+      const res = await authFetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed saving brand.');
 
       setIsModalOpen(false);
-      setEditingBrand(null);
-      onRefresh();
+      fetchBrands();
     } catch (err: any) {
-      setError(err.message || 'Failed to save laminate brand.');
-    } finally {
-      setSaving(false);
+      alert(err.message);
     }
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`Are you sure you want to delete the laminate brand "${name}"?`)) return;
-
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this laminate brand?')) return;
     try {
-      await cmsApi.deleteLaminateBrand(id);
-      onRefresh();
+      const res = await authFetch(`/api/admin/laminates/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed deleting brand.');
+      fetchBrands();
     } catch (err: any) {
-      alert(err.message || 'Failed to delete laminate brand.');
+      alert(err.message);
     }
   };
 
-  const handleFileUpload = async (file: File, type: 'pdf' | 'cover') => {
-    try {
-      if (type === 'pdf') setUploadingPdf(true);
-      else setUploadingCover(true);
-
-      const res = await cmsApi.uploadMedia(file);
-      if (res && res.media && res.media.url) {
-        if (type === 'pdf') {
-          setEditingBrand((prev) => ({ ...prev, pdfUrl: res.media.url }));
-        } else {
-          setEditingBrand((prev) => ({ ...prev, coverImage: res.media.url, bannerImage: res.media.url }));
-        }
-      }
-    } catch (err: any) {
-      alert(err.message || 'File upload failed.');
-    } finally {
-      setUploadingPdf(false);
-      setUploadingCover(false);
-    }
-  };
+  const filtered = (brands || []).filter((b) => {
+    const st = (searchTerm || '').toLowerCase();
+    return (
+      (b?.name || '').toLowerCase().includes(st) ||
+      (b?.shortDescription || '').toLowerCase().includes(st)
+    );
+  });
 
   return (
     <div className="space-y-6">
-      {/* Top Header & Action */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-zinc-200/80 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-800/80 p-5 rounded-2xl border border-slate-700/80">
         <div>
-          <h2 className="text-xl font-bold text-zinc-900 flex items-center gap-2">
-            <Layers className="w-5 h-5 text-[#f2b800]" />
-            <span>Laminate Brands & PDF Catalogues</span>
-          </h2>
-          <p className="text-xs text-zinc-500 mt-1">
-            Manage Formica/Laminate brands, flipbook PDF catalogues, finishes, and specs.
+          <h1 className="text-xl font-bold text-white flex items-center gap-2">
+            <Layers className="w-6 h-6 text-indigo-400" />
+            Laminate Brands & Catalogues CMS
+          </h1>
+          <p className="text-xs text-slate-400 mt-1">
+            Manage decorative surface brands, 3D flipbook PDF swatches, and finishes.
           </p>
         </div>
 
         <button
-          onClick={handleOpenAdd}
-          className="bg-[#000d22] hover:bg-[#775a19] text-white font-bold px-4 py-2.5 rounded-xl text-xs transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer self-start sm:self-auto"
+          onClick={() => handleOpenModal()}
+          className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2"
         >
-          <Plus className="w-4 h-4 text-[#f2b800]" />
-          <span>Add New Laminate Brand</span>
+          <Plus className="w-4 h-4" /> Add Laminate Brand
         </button>
       </div>
 
-      {/* Search Bar */}
-      <div className="relative max-w-md">
-        <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
-        <input
-          type="text"
-          placeholder="Search brands..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-white border border-zinc-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-medium focus:outline-none focus:border-[#000d22]"
-        />
-      </div>
-
-      {/* Brands Table */}
-      <div className="bg-white rounded-2xl border border-zinc-200/80 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="bg-zinc-50 border-b border-zinc-200 text-zinc-500 uppercase tracking-wider font-bold">
-                <th className="py-3.5 px-4">Brand</th>
-                <th className="py-3.5 px-4">Status & Order</th>
-                <th className="py-3.5 px-4">PDF Catalogue</th>
-                <th className="py-3.5 px-4">Finishes</th>
-                <th className="py-3.5 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100">
-              {filteredBrands.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="py-12 text-center text-zinc-400">
-                    No laminate brands found. Click "Add New Laminate Brand" to create one.
-                  </td>
-                </tr>
-              ) : (
-                filteredBrands.map((brand) => (
-                  <tr key={brand.id} className="hover:bg-zinc-50/80 transition-colors">
-                    {/* Brand Info */}
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={brand.coverImage}
-                          alt={brand.name}
-                          className="w-12 h-10 object-cover rounded-lg border border-zinc-200 shrink-0"
-                        />
-                        <div>
-                          <div className="font-bold text-zinc-900 text-sm flex items-center gap-1.5">
-                            <span>{brand.name}</span>
-                            {brand.isFeatured && (
-                              <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" title="Featured Brand" />
-                            )}
-                          </div>
-                          <p className="text-[11px] text-zinc-500 truncate max-w-xs">{brand.shortDescription}</p>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Status & Order */}
-                    <td className="py-4 px-4">
-                      <div className="space-y-1">
-                        <span
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                            brand.active
-                              ? 'bg-emerald-100 text-emerald-800'
-                              : 'bg-zinc-100 text-zinc-600'
-                          }`}
-                        >
-                          {brand.active ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                          {brand.active ? 'Active' : 'Hidden'}
-                        </span>
-                        <div className="text-[11px] font-mono text-zinc-400">Order: {brand.displayOrder}</div>
-                      </div>
-                    </td>
-
-                    {/* PDF Catalogue */}
-                    <td className="py-4 px-4">
-                      {brand.pdfUrl ? (
-                        <a
-                          href={brand.pdfUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors"
-                        >
-                          <BookOpen className="w-3.5 h-3.5 text-amber-600" />
-                          <span>View PDF</span>
-                        </a>
-                      ) : (
-                        <span className="text-zinc-400 italic text-[11px]">No PDF (Coming Soon)</span>
-                      )}
-                    </td>
-
-                    {/* Finishes */}
-                    <td className="py-4 px-4">
-                      <div className="flex flex-wrap gap-1 max-w-xs">
-                        {brand.availableFinishes?.slice(0, 3).map((f, i) => (
-                          <span key={i} className="bg-zinc-100 text-zinc-700 text-[10px] font-semibold px-2 py-0.5 rounded">
-                            {f}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-
-                    {/* Actions */}
-                    <td className="py-4 px-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleOpenEdit(brand)}
-                          className="p-1.5 rounded-lg text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors cursor-pointer"
-                          title="Edit Brand"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-
-                        <button
-                          onClick={() => handleDelete(brand.id, brand.name)}
-                          className="p-1.5 rounded-lg text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer"
-                          title="Delete Brand"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+      <div className="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60">
+        <div className="relative max-w-md">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Search laminate brand..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-slate-900 border border-slate-700 text-white pl-9 pr-4 py-2 rounded-lg text-xs outline-none focus:border-indigo-500"
+          />
         </div>
       </div>
 
-      {/* Edit / Add Modal */}
-      {isModalOpen && editingBrand && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fadeIn">
-          <div className="bg-white rounded-3xl border border-zinc-200 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl p-6 sm:p-8 space-y-6">
-            <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
-              <h3 className="text-lg font-bold text-zinc-900">
-                {editingBrand.id ? 'Edit Laminate Brand' : 'Add New Laminate Brand'}
-              </h3>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="text-zinc-400 hover:text-zinc-600 p-1 rounded-lg"
-              >
-                <X className="w-5 h-5" />
-              </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {loading ? (
+          <div className="col-span-full py-12 text-center text-slate-400">Loading laminate brands...</div>
+        ) : filtered.length === 0 ? (
+          <div className="col-span-full py-12 text-center text-slate-400">No laminate brands found.</div>
+        ) : (
+          filtered.map((brand) => (
+            <div
+              key={brand.id}
+              className="bg-slate-800/80 border border-slate-700/80 rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between hover:border-indigo-500/50 transition"
+            >
+              <div className="relative h-40 bg-slate-900">
+                <img
+                  src={brand.coverImage}
+                  alt={brand.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
+                <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
+                  <span className="text-sm font-bold text-white drop-shadow">{brand.name}</span>
+                  {brand.pdfUrl ? (
+                    <span className="text-[10px] bg-indigo-500/80 text-white px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
+                      <BookOpen className="w-3 h-3" /> PDF Catalogue
+                    </span>
+                  ) : (
+                    <span className="text-[10px] bg-slate-700 text-slate-300 px-2 py-0.5 rounded-full">
+                      No PDF
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="p-4 space-y-3 flex-1 text-xs text-slate-300">
+                <p className="line-clamp-2 text-slate-400">{brand.shortDescription}</p>
+
+                <div className="flex flex-wrap gap-1">
+                  {brand.availableFinishes.slice(0, 3).map((f) => (
+                    <span
+                      key={f}
+                      className="bg-slate-700/60 text-slate-200 border border-slate-600/50 px-2 py-0.5 rounded text-[10px]"
+                    >
+                      {f}
+                    </span>
+                  ))}
+                  {brand.availableFinishes.length > 3 && (
+                    <span className="text-[10px] text-slate-400 font-semibold self-center">
+                      +{brand.availableFinishes.length - 3} more
+                    </span>
+                  )}
+                </div>
+
+                <div className="pt-2 border-t border-slate-700/50 flex items-center justify-between text-[11px] text-slate-400">
+                  <span>Thickness: {brand.thickness || '1.0mm'}</span>
+                  <span>{brand.warranty || 'Guarantee'}</span>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/60 p-3 border-t border-slate-700/60 flex items-center justify-between">
+                <span className="text-[10px] text-slate-400 font-mono">Slug: /{brand.slug}</span>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => handleOpenModal(brand)}
+                    className="p-1.5 text-slate-400 hover:text-indigo-300 hover:bg-slate-700 rounded transition"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(brand.id)}
+                    className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-700 rounded transition"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
             </div>
+          ))
+        )}
+      </div>
 
-            {error && (
-              <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3 rounded-xl font-medium">
-                {error}
-              </div>
-            )}
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-xl w-full p-6 shadow-2xl relative my-8 text-xs">
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
 
-            <form onSubmit={handleSave} className="space-y-4 text-xs">
-              {/* Name & Slug */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-bold text-zinc-700 mb-1">Brand Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={editingBrand.name || ''}
-                    onChange={(e) => setEditingBrand({ ...editingBrand, name: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-[#000d22]"
-                    placeholder="e.g. Greenlam Laminates"
-                  />
-                </div>
+            <h2 className="text-lg font-bold text-white mb-4">
+              {editingBrand ? 'Edit Laminate Brand' : 'Add New Laminate Brand'}
+            </h2>
 
-                <div>
-                  <label className="block font-bold text-zinc-700 mb-1">Display Order</label>
-                  <input
-                    type="number"
-                    value={editingBrand.displayOrder || 1}
-                    onChange={(e) =>
-                      setEditingBrand({ ...editingBrand, displayOrder: parseInt(e.target.value) || 1 })
-                    }
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-[#000d22]"
-                  />
-                </div>
-              </div>
-
-              {/* Short & Detailed Description */}
+            <form onSubmit={handleSave} className="space-y-4">
               <div>
-                <label className="block font-bold text-zinc-700 mb-1">Short Description</label>
+                <label className="block text-slate-300 font-semibold mb-1">Brand Name</label>
                 <input
                   type="text"
-                  value={editingBrand.shortDescription || ''}
-                  onChange={(e) => setEditingBrand({ ...editingBrand, shortDescription: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-[#000d22]"
-                  placeholder="e.g. 100% Pure Phenolic Bespoke Decor Surfaces."
+                  required
+                  value={formData.name || ''}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full bg-slate-800 border border-slate-700 text-white p-2.5 rounded-lg outline-none focus:border-indigo-500"
+                  placeholder="FutureLam, Greenlam, etc."
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-zinc-700 mb-1">Detailed Description</label>
+                <label className="block text-slate-300 font-semibold mb-1">Catalogue PDF URL</label>
+                <input
+                  type="text"
+                  value={formData.pdfUrl || ''}
+                  onChange={(e) => setFormData({ ...formData, pdfUrl: e.target.value })}
+                  className="w-full bg-slate-800 border border-slate-700 text-white p-2.5 rounded-lg outline-none focus:border-indigo-500 font-mono"
+                  placeholder="/catalogues/futurelam.pdf"
+                />
+              </div>
+
+              <ImagePicker
+                label="Cover Banner Image"
+                value={formData.coverImage || ''}
+                onChange={(url) => setFormData({ ...formData, coverImage: url })}
+                helpText="Upload file, paste image from clipboard, or enter URL"
+              />
+
+              <ImagePicker
+                label="Brand Logo"
+                value={formData.logo || ''}
+                onChange={(url) => setFormData({ ...formData, logo: url })}
+                helpText="Brand icon or emblem photo"
+              />
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">Short Tagline Description</label>
+                <input
+                  type="text"
+                  value={formData.shortDescription || ''}
+                  onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
+                  className="w-full bg-slate-800 border border-slate-700 text-white p-2.5 rounded-lg outline-none focus:border-indigo-500"
+                  placeholder="100% Pure Phenolic Bespoke Surfaces..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">Full Overview Description</label>
                 <textarea
                   rows={3}
-                  value={editingBrand.description || ''}
-                  onChange={(e) => setEditingBrand({ ...editingBrand, description: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-[#000d22]"
-                  placeholder="Full brand details, quality guarantees, and usage overview."
+                  value={formData.description || ''}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  className="w-full bg-slate-800 border border-slate-700 text-white p-2.5 rounded-lg outline-none focus:border-indigo-500"
                 />
               </div>
 
-              {/* PDF Upload */}
-              <div className="bg-amber-50/50 border border-amber-200/80 p-4 rounded-2xl space-y-2">
-                <label className="block font-bold text-amber-900">PDF Catalogue File URL</label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={editingBrand.pdfUrl || ''}
-                    onChange={(e) => setEditingBrand({ ...editingBrand, pdfUrl: e.target.value })}
-                    className="flex-1 bg-white border border-amber-200 rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-[#000d22]"
-                    placeholder="/catalogues/greenlam.pdf or https://..."
-                  />
-                  <label className="bg-[#000d22] hover:bg-[#775a19] text-white px-3 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 shrink-0">
-                    {uploadingPdf ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4 text-[#f2b800]" />}
-                    <span>Upload PDF</span>
-                    <input
-                      type="file"
-                      accept=".pdf,application/pdf"
-                      className="hidden"
-                      onChange={(e) => {
-                        if (e.target.files?.[0]) {
-                          handleFileUpload(e.target.files[0], 'pdf');
-                        }
-                      }}
-                    />
-                  </label>
-                </div>
-                <p className="text-[10px] text-amber-800">
-                  Leave empty if no PDF is available. The system will display a clean "Catalogue Coming Soon" card with contact CTAs.
-                </p>
-              </div>
-
-              {/* Image URL & Upload */}
-              <div>
-                <label className="block font-bold text-zinc-700 mb-1">Cover/Banner Image URL</label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={editingBrand.coverImage || ''}
-                    onChange={(e) => setEditingBrand({ ...editingBrand, coverImage: e.target.value })}
-                    className="flex-1 bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-[#000d22]"
-                  />
-                  <label className="bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 shrink-0">
-                    {uploadingCover ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4 text-[#f2b800]" />}
-                    <span>Upload Image</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        if (e.target.files?.[0]) {
-                          handleFileUpload(e.target.files[0], 'cover');
-                        }
-                      }}
-                    />
-                  </label>
-                </div>
-              </div>
-
-              {/* Finishes (Comma separated) */}
-              <div>
-                <label className="block font-bold text-zinc-700 mb-1">
-                  Available Finishes (Comma separated)
-                </label>
-                <input
-                  type="text"
-                  value={(editingBrand.availableFinishes || []).join(', ')}
-                  onChange={(e) =>
-                    setEditingBrand({
-                      ...editingBrand,
-                      availableFinishes: e.target.value.split(',').map((s) => s.trim()).filter(Boolean),
-                    })
-                  }
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-[#000d22]"
-                  placeholder="High Gloss, Silky Matt, Stone, Leather, Write On"
-                />
-              </div>
-
-              {/* Collections (Comma separated) */}
-              <div>
-                <label className="block font-bold text-zinc-700 mb-1">
-                  Featured Collections (Comma separated)
-                </label>
-                <input
-                  type="text"
-                  value={(editingBrand.availableCollections || []).join(', ')}
-                  onChange={(e) =>
-                    setEditingBrand({
-                      ...editingBrand,
-                      availableCollections: e.target.value.split(',').map((s) => s.trim()).filter(Boolean),
-                    })
-                  }
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-[#000d22]"
-                  placeholder="Abstract Art, Natural Oak, Metallic Gloss"
-                />
-              </div>
-
-              {/* Applications & Thickness/Warranty */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-zinc-700 mb-1">Thickness</label>
+                  <label className="block text-slate-300 font-semibold mb-1">Thickness</label>
                   <input
                     type="text"
-                    value={editingBrand.thickness || ''}
-                    onChange={(e) => setEditingBrand({ ...editingBrand, thickness: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-[#000d22]"
-                    placeholder="0.8mm - 1.0mm"
+                    value={formData.thickness || ''}
+                    onChange={(e) => setFormData({ ...formData, thickness: e.target.value })}
+                    className="w-full bg-slate-800 border border-slate-700 text-white p-2.5 rounded-lg outline-none focus:border-indigo-500"
+                    placeholder="1.0mm"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-zinc-700 mb-1">Warranty</label>
+                  <label className="block text-slate-300 font-semibold mb-1">Warranty</label>
                   <input
                     type="text"
-                    value={editingBrand.warranty || ''}
-                    onChange={(e) => setEditingBrand({ ...editingBrand, warranty: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-[#000d22]"
-                    placeholder="10 Years Manufacturer Warranty"
+                    value={formData.warranty || ''}
+                    onChange={(e) => setFormData({ ...formData, warranty: e.target.value })}
+                    className="w-full bg-slate-800 border border-slate-700 text-white p-2.5 rounded-lg outline-none focus:border-indigo-500"
+                    placeholder="10 Years Warranty"
                   />
                 </div>
               </div>
 
-              {/* Toggles */}
-              <div className="flex flex-wrap gap-6 pt-2">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={editingBrand.active !== false}
-                    onChange={(e) => setEditingBrand({ ...editingBrand, active: e.target.checked })}
-                    className="w-4 h-4 rounded text-[#000d22]"
-                  />
-                  <span className="font-bold text-zinc-800">Active (Visible on Website)</span>
-                </label>
-
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={Boolean(editingBrand.isFeatured)}
-                    onChange={(e) => setEditingBrand({ ...editingBrand, isFeatured: e.target.checked })}
-                    className="w-4 h-4 rounded text-[#000d22]"
-                  />
-                  <span className="font-bold text-zinc-800">Featured Brand</span>
-                </label>
-              </div>
-
-              {/* Submit Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-100">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl border border-zinc-200 text-zinc-700 font-bold hover:bg-zinc-100 transition-colors cursor-pointer"
+                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg hover:bg-slate-700"
                 >
                   Cancel
                 </button>
-
                 <button
                   type="submit"
-                  disabled={saving}
-                  className="bg-[#000d22] hover:bg-[#775a19] text-white font-extrabold px-6 py-2.5 rounded-xl transition-all shadow-md cursor-pointer flex items-center gap-2"
+                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg shadow"
                 >
-                  {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-                  <span>{editingBrand.id ? 'Save Changes' : 'Create Brand'}</span>
+                  Save Brand
                 </button>
               </div>
             </form>

@@ -1,5 +1,5 @@
-import React from 'react';
-import { ViewType, Language, ProductCategory, Product } from '../types';
+import React, { useState, useEffect } from 'react';
+import { ViewType, Language, ProductCategory, Product, SiteSettings, HomePageContent } from '../types';
 import { TRANSLATIONS } from '../data/translations';
 import { PRODUCTS } from '../data/products';
 
@@ -17,45 +17,73 @@ export const HomeView: React.FC<HomeViewProps> = ({
   onSelectProduct,
 }) => {
   const t = TRANSLATIONS[lang];
+  const [productsData, setProductsData] = useState<Product[]>(PRODUCTS);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const [homeContent, setHomeContent] = useState<HomePageContent | null>(null);
 
-  const categories: { name: ProductCategory; image: string; alt: string }[] = [
+  useEffect(() => {
+    fetch('/api/public/data')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.products && Array.isArray(data.products) && data.products.length > 0) {
+          setProductsData(data.products);
+        }
+        if (data.siteSettings) {
+          setSiteSettings(data.siteSettings);
+        }
+        if (data.homeContent) {
+          setHomeContent(data.homeContent);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to fetch home view data:', err);
+      });
+  }, []);
+
+  const rawCategories: { name: ProductCategory; defaultImg: string; alt: string }[] = [
     {
       name: 'Plywood',
-      image:
+      defaultImg:
         'https://lh3.googleusercontent.com/aida-public/AB6AXuDZSj5VQSONONMdx2el49ip_WMBIEVcu_kugoWFuPydu5j0Ox4ozrGZ8aIfDfPDa8zGn7CTS7XBYS9DOrG13HtuZ0VNUXxImu3zUDV6qoUk7I66NlbK9EHtD8nT47I5W3z9fylPJuSVuq6t-88IFXJcyOhwN5tylZpknaje4SZbuB_C4RsXPRlArGvS-CwuCKN4V-ZFAUGhUfAbj9Z220nciW9aC3p4Ib3sKV-hKspCcd0RTuA7CbrESwNrKCxVd7Dk75PW4fwy2LV7',
       alt: 'Close up of uniform plywood edges',
     },
     {
       name: 'Hardware',
-      image:
+      defaultImg:
         'https://lh3.googleusercontent.com/aida-public/AB6AXuC4iYnjcs2QgK-qdqtr-Acu6HeiI-qOSqNE-EIXBa9iJvUsGEAjk6r0DyhcGPuEtkd-OmM9FKogQDuo3g3U0XgR68saK42_PwA2J5ChniyDF5jzN53txvdf5QSIZly--xv3Uq9LlJNyzf2wbbovadCEOR5TRX3Azjbg4XiIskIBs3ZAulcIMcnL0mosB8p1hWZkKok_VdFa0c3Gs9uKSnSqrzcI_xuM7nr50fNMmz1Q96QbjX9s4f3bESf1FXjWd6KZ4N6-YG3lQsvn',
       alt: 'Architectural door handles',
     },
     {
       name: 'Locks & Security',
-      image:
+      defaultImg:
         'https://lh3.googleusercontent.com/aida-public/AB6AXuAGCfHtrgO8fdyAgwfIVPO6qykFPHzR0GnYdBGeXc7ReZA8sgLiLdf0I51ggXuCWx3lZYU2k_oqOMFCvFq5WE5zN7s6IGBAOoDYlhlGlq_sb4JzizoelDJqZyq4fEU3Rf993KKASg0BAq5zLtkF9Z-eOiiKu1BJrJRLAtu7VyQfaPW8ntRph3PPoW5_DJtm0f9k3QuJr5u_A6_bI4amBcsltGrvSFuAkB-sVF-5bX8QIkeuxj8RBsDSKK6B8IRHmEoWJPPyBPfYBwID',
       alt: 'Cylindrical door lock',
     },
     {
       name: 'Veneers',
-      image:
+      defaultImg:
         'https://lh3.googleusercontent.com/aida-public/AB6AXuDCOkg1m0CUw6eQ64s1io7auKi-Av09AzmK9QH_9-Vhw18rGXyYewn1RklAuj42Ymft2MJoK4XiTLUKpW9rFRd4m_pSHk03ml2xuvWToVOKJfX5RZJUL8ewbPbtWXhe3W-xq0QjcUZAVGn5IsupZ8L1Ab1kuEJnE2YPonCmbhpDk4FaAROfPWIYOH3h7fPaRpErbotYv0hqbitVflnSVNQoCAczXWsgJJ6C7tkSc4WiZq3e22nwkms-XwV4DeE0RgsfrkMzX2a-PwFm',
       alt: 'Natural walnut wood veneer',
     },
     {
       name: 'Laminates',
-      image:
+      defaultImg:
         'https://lh3.googleusercontent.com/aida-public/AB6AXuD0xecB4gLuBLbV1rk1w7Og818tHNS7em9EM6Bu1uOvAebGbOeG7WTbOf9NmTBtmR1_ExezCJ5RdEXURoxxnw7KinKupykQYYkPPJrTaQs4rPQg0FFAUUbxnVpD8mNbgedUh1xVZc9Ml4kpUIxYtdHK2zNc25Rzff7xVWgl2B27NzWF65ifUwM4uwgr0V5NeMY3th2RwAElRVLK5glphhHRpsT-IH_Eq2qyBcdjno_WQYXWS3laZAR3m3wKgvuUmXhPH0j0fD0G8nIk',
       alt: 'Matte laminate surface',
     },
     {
       name: 'MDF & Particle Board',
-      image:
+      defaultImg:
         'https://lh3.googleusercontent.com/aida-public/AB6AXuB9XcqdFipfNiz0Ft9yhdyXHTozr7apy_nJE4lqpRYm7oge1jKKnBHKlm6Ro1XRJJyV_f5AXEWy5KXMXF3n6WjItcAp89hxHxmCTvtLf-E8Uy5zQtty_G34toO5f37miD3Q0LPpX5u0cd88B91R_xIlkT6LkoQUonCYARA9F8Qk61l7dQFzrLWx79YEsmWs8iaKf5O7vV7gq_zOU6AjsMt4UYJvjHT_FOsdJpyGmrP16i2Ijjf7jtaLeO2TInnGtRN_kzZlChJLuPm1',
       alt: 'Plain MDF Board',
     },
   ];
+
+  const categories = rawCategories.map((c) => ({
+    name: c.name,
+    image: homeContent?.categoryImages?.[c.name] || c.defaultImg,
+    alt: c.alt,
+  }));
 
   return (
     <div className="flex flex-col w-full">
@@ -63,10 +91,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
       <section className="relative w-full h-[75vh] min-h-[550px] max-h-[750px] flex items-center overflow-hidden bg-[#000d22]">
         <div className="absolute inset-0 z-0">
           <div
-            className="w-full h-full bg-cover bg-center opacity-45 mix-blend-overlay"
+            className="w-full h-full bg-cover bg-center opacity-45 mix-blend-overlay transition-all duration-500"
             style={{
-              backgroundImage:
-                "url('https://lh3.googleusercontent.com/aida-public/AB6AXuA3llWq8ystHZF3SZDQ1OHhV3AMqlJhyQy_MK3cWR7gOzzUMmobj3zHWpHtpn-Gcv8TcC-TIi_nrGoKampICAZpIqv2H9lEYqyFBxJ9HJW6_MQYofSiNPcSd6lyb-lH96EFXzSdLBwgTVkpZHH7PFPjB-ITFudi7bkRYGGfz5lNlt7mdoIo6lOSklvtDD0xgCMk0yo-qvc2nfMIwj3etOfE6TIlCPR1SB6e2Y3vYLONMmSp_5irOaqwjDC6Dqa9ymh8Z9dCV-8VTkFV')",
+              backgroundImage: `url('${
+                homeContent?.heroBannerImage ||
+                siteSettings?.bannerImage ||
+                "https://lh3.googleusercontent.com/aida-public/AB6AXuA3llWq8ystHZF3SZDQ1OHhV3AMqlJhyQy_MK3cWR7gOzzUMmobj3zHWpHtpn-Gcv8TcC-TIi_nrGoKampICAZpIqv2H9lEYqyFBxJ9HJW6_MQYofSiNPcSd6lyb-lH96EFXzSdLBwgTVkpZHH7PFPjB-ITFudi7bkRYGGfz5lNlt7mdoIo6lOSklvtDD0xgCMk0yo-qvc2nfMIwj3etOfE6TIlCPR1SB6e2Y3vYLONMmSp_5irOaqwjDC6Dqa9ymh8Z9dCV-8VTkFV'"
+              }')`,
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#000d22] via-[#000d22]/80 to-transparent" />
@@ -165,7 +196,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {PRODUCTS.slice(0, 3).map((prod) => (
+            {productsData.slice(0, 6).map((prod) => (
               <div
                 key={prod.id}
                 className="bg-white rounded-2xl overflow-hidden border border-[#c4c6cf] hover:shadow-xl transition-all flex flex-col group"
@@ -234,7 +265,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <div className="relative">
               <div className="aspect-square bg-[#f0eded] rounded-2xl overflow-hidden border border-[#c4c6cf]">
                 <img
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBV0rVz0kKsuvZhmNg_S9R-bTED--8g2WkZVOudUNwVPDqvQph2rHNgxUSuNMvqjLiN7vFVBIPuQUrtkZ_lWbbIIdyRjmYns655xpsqAug7IQcQpUonJIj8eOVahJWdtrMJFMl8K4SyvhfcJffWzCrp8HM1iq7N46JAqv6L6BNNo_AHMb-xPI5Q3zBcMArLm09GG5GHu6JJqtXfPChGTgJKsx4uo47gbw1OMTXQredrb-5gk_0jZXmPYrOdaNuZWziUo65Qc5DTnyg6"
+                  src={
+                    homeContent?.storyImage ||
+                    "https://lh3.googleusercontent.com/aida-public/AB6AXuBV0rVz0kKsuvZhmNg_S9R-bTED--8g2WkZVOudUNwVPDqvQph2rHNgxUSuNMvqjLiN7vFVBIPuQUrtkZ_lWbbIIdyRjmYns655xpsqAug7IQcQpUonJIj8eOVahJWdtrMJFMl8K4SyvhfcJffWzCrp8HM1iq7N46JAqv6L6BNNo_AHMb-xPI5Q3zBcMArLm09GG5GHu6JJqtXfPChGTgJKsx4uo47gbw1OMTXQredrb-5gk_0jZXmPYrOdaNuZWziUo65Qc5DTnyg6"
+                  }
                   alt="High quality plywood texture"
                   className="w-full h-full object-cover"
                 />

@@ -380,7 +380,7 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
     if (pdfUrl) {
       const link = document.createElement('a');
       link.href = pdfUrl;
-      link.download = `${brandName.toLowerCase().replace(/\s+/g, '_')}_catalogue.pdf`;
+      link.download = `${(brandName || 'catalogue').toLowerCase().replace(/\s+/g, '_')}_catalogue.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
