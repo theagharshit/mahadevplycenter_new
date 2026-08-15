@@ -17,6 +17,38 @@ import { InquiryItem, AdminUser, MediaItem, CategoryCatalogue } from './src/type
 const app = express();
 const PORT = 3000;
 
+// Express 4 does not forward rejected promises from `async` route handlers
+// to the error-handling middleware — an unhandled rejection just leaves the
+// request hanging with no response. On Cloud Functions/Cloud Run that shows
+// up to the client as the platform's own HTML error page (e.g. a
+// "<!DOCTYPE html>..." body), which breaks `res.json()` parsing on the
+// frontend even though every route here is meant to answer with JSON.
+// Wrapping every app.get/post/put/delete handler once here guarantees any
+// thrown/rejected error is routed to the JSON error handler below instead.
+(['get', 'post', 'put', 'delete', 'patch'] as const).forEach((method) => {
+  const original = app[method].bind(app);
+  (app as any)[method] = (routePath: any, ...handlers: any[]) => {
+    if (handlers.length === 0) {
+      // e.g. app.get('trust proxy') used as a settings getter, not a route.
+      return (original as any)(routePath);
+    }
+    const wrapped = handlers.map((handler) => {
+      if (typeof handler !== 'function') return handler;
+      return (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        try {
+          const result = handler(req, res, next);
+          if (result && typeof result.catch === 'function') {
+            result.catch(next);
+          }
+        } catch (err) {
+          next(err);
+        }
+      };
+    });
+    return (original as any)(routePath, ...wrapped);
+  };
+});
+
 const JWT_SECRET = process.env.JWT_SECRET || 'mahadev_ply_center_super_secret_key_2026';
 
 function generateToken(payload: object, expiresInMs: number = 24 * 60 * 60 * 1000): string {
@@ -65,6 +97,25 @@ const upload = multer({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
+
+// Firestore-backed data is loaded into memory once at process start (see
+// startServer() below). On serverless platforms (Cloud Functions/Cloud Run)
+// a cold-started instance can receive its first request before that load
+// finishes, which used to make readDatabase() throw "Database not
+// initialized" mid-request. Gate every request on that startup promise so
+// requests simply wait for it instead of failing.
+let dbReadyPromise: Promise<void> | null = null;
+app.use((_req, res, next) => {
+  if (!dbReadyPromise) {
+    next();
+    return;
+  }
+  dbReadyPromise
+    .then(() => next())
+    .catch(() => {
+      res.status(503).json({ error: 'Server is still starting up. Please try again in a moment.' });
+    });
+});
 
 app.use('/uploads', express.static(uploadsDir));
 app.use('/catalogues', express.static(cataloguesDir));
@@ -219,35 +270,35 @@ app.post('/api/auth/login', async (req, res) => {
     return;
   }
 
-  const db = readDatabase();
-  const searchStr = String(email).trim().toLowerCase();
-  const user = db.users.find(
-    (u) =>
-      (u.email.toLowerCase() === searchStr ||
-        u.id.toLowerCase() === searchStr ||
-        u.name.toLowerCase() === searchStr ||
-        searchStr === 'admin' ||
-        searchStr === 'admin@mahadevply.com') &&
-      u.active !== false
-  );
-
-  if (!user) {
-    res.status(401).json({ error: 'Invalid email or password.' });
-    return;
-  }
-
-  const isValidPassword =
-    verifyUserPassword(user.email, password) ||
-    verifyUserPassword(user.id, password) ||
-    verifyUserPassword('admin', password) ||
-    password === 'AdminPassword123!';
-
-  if (!isValidPassword) {
-    res.status(401).json({ error: 'Invalid email or password.' });
-    return;
-  }
-
   try {
+    const db = readDatabase();
+    const searchStr = String(email).trim().toLowerCase();
+    const user = db.users.find(
+      (u) =>
+        (u.email.toLowerCase() === searchStr ||
+          u.id.toLowerCase() === searchStr ||
+          u.name.toLowerCase() === searchStr ||
+          searchStr === 'admin' ||
+          searchStr === 'admin@mahadevply.com') &&
+        u.active !== false
+    );
+
+    if (!user) {
+      res.status(401).json({ error: 'Invalid email or password.' });
+      return;
+    }
+
+    const isValidPassword =
+      verifyUserPassword(user.email, password) ||
+      verifyUserPassword(user.id, password) ||
+      verifyUserPassword('admin', password) ||
+      password === 'AdminPassword123!';
+
+    if (!isValidPassword) {
+      res.status(401).json({ error: 'Invalid email or password.' });
+      return;
+    }
+
     const expiresIn = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
     const token = generateToken({ id: user.id, email: user.email, role: user.role }, expiresIn);
 
@@ -1042,18 +1093,31 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   res.status(500).json({ error: err?.message || 'Internal server error' });
 });
 
-// VITE MIDDLEWARE / PRODUCTION STATIC SERVER
-async function startServer() {
+async function initDatabase(): Promise<void> {
   try {
-    await import('./src/server/db.js').then(async (m) => {
-      await m.initializeDatabase();
-      await m.initializePasswords();
-      console.log('Firebase Firestore synchronized and loaded into memory.');
-    });
+    const m = await import('./src/server/db.js');
+    await m.initializeDatabase();
+    await m.initializePasswords();
+    console.log('Firebase Firestore synchronized and loaded into memory.');
   } catch (err) {
     console.error('Failed to initialize database:', err);
-    if (!process.env.FUNCTION_TARGET && !process.env.FIREBASE_CONFIG) process.exit(1);
+    if (!process.env.FUNCTION_TARGET && !process.env.FIREBASE_CONFIG) {
+      process.exit(1);
+    }
+    // On a serverless instance, don't leave the process permanently unable
+    // to serve requests — fall back to default seed data/credentials so
+    // routes (in particular admin login) keep working in a degraded mode
+    // instead of readDatabase() throwing "Database not initialized" for
+    // every request until the instance recycles.
+    const m = await import('./src/server/db.js');
+    m.ensureFallbackData();
   }
+}
+
+// VITE MIDDLEWARE / PRODUCTION STATIC SERVER
+async function startServer() {
+  dbReadyPromise = initDatabase();
+  await dbReadyPromise;
 
   if (process.env.NODE_ENV !== 'production' && !process.env.FUNCTION_TARGET && !process.env.FIREBASE_CONFIG) {
     const vite = await createViteServer({
