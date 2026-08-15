@@ -534,6 +534,17 @@ export async function initializePasswords() {
   }
 }
 
+// Guarantees the server can still answer requests (with default seed data
+// and the default admin credentials) even if Firestore is unreachable when
+// initializeDatabase()/initializePasswords() fail. Without this, a failed
+// Firestore call left inMemoryDb/inMemoryPasswords null forever on
+// serverless instances, and every request calling readDatabase() would
+// throw "Database not initialized".
+export function ensureFallbackData(): void {
+  if (!inMemoryDb) inMemoryDb = generateInitialData();
+  if (!inMemoryPasswords) inMemoryPasswords = getUserPasswords();
+}
+
 export function saveUserPassword(emailOrUsername: string, plainTextPassword: string): void {
   const salt = bcrypt.genSaltSync(10);
   const hash = bcrypt.hashSync(plainTextPassword, salt);
